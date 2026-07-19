@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.DS_Store
+
+# per-user runtime data (resume facts are PII) — keep only data/README.md
+data/*
+!data/README.md
+
+# seed resume (PII: phone, address) — approved reference, kept out of git
+Hung-Ting_Lee_resume.pdf
+
+# spike artifacts (dummy PDF + screenshots of real postings)
+spike/out/
+spike/dummy_resume.pdf

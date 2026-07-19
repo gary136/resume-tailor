@@ -1,0 +1,30 @@
+# Fit-evaluation soft-score rubric — v1, Gary-approved 2026-07-19.
+# This file IS the analysis framework: the evaluator builds its scoring schema
+# and prompt from it, and code sums the components. Calibrate by editing here —
+# no code change. Reference decomposition (GitLab SRE Cloud Cost job):
+#   tech_stack 22 · domain 12 · role_shape 10 · seniority 16 = 60 -> tailor.
+#
+# Lookup order: $RESUME_TAILOR_RUBRIC path -> data/rubric.yaml -> this default.
+version: 1
+fit_threshold: 70   # hard reqs met + total >= threshold -> fits; below -> tailor
+components:
+  tech_stack:
+    max: 40
+    criteria: >-
+      Overlap of the posting's technologies with the fact inventory:
+      40 = candidate's daily stack; ~20 = adjacent/transferable; 0 = disjoint.
+  domain:
+    max: 20
+    criteria: >-
+      Industry/problem-domain familiarity per the facts (e.g. insurance data,
+      billing pipelines): 20 = same domain; 0 = unfamiliar.
+  role_shape:
+    max: 20
+    criteria: >-
+      Role type vs candidate's experience: backend/full-stack IC high;
+      SRE/sales/management low unless facts support it.
+  seniority:
+    max: 20
+    criteria: >-
+      Level alignment with the candidate's experience: mid/senior high;
+      staff/principal or entry-level low.

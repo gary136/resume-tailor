@@ -81,10 +81,10 @@ def test_evaluate_pending_writes_results(conn, monkeypatch):
 
     monkeypatch.setattr(
         evaluator, "evaluate_job",
-        lambda client, system, job: _evaluation(soft_score=55),
+        lambda backend, system, job: _evaluation(soft_score=55),
     )
     counts = evaluator.evaluate_pending(
-        conn, limit=10, client=object(), inventory=INVENTORY, threshold=70
+        conn, limit=10, backend=object(), inventory=INVENTORY, threshold=70
     )
     assert counts == {"fits": 0, "tailor": 2, "skip": 0, "refused": 0}
 
@@ -100,7 +100,16 @@ def test_refusal_leaves_job_pending(conn, monkeypatch):
     db.add_job(conn, _job("j1"))
     monkeypatch.setattr(evaluator, "evaluate_job", lambda *a: None)
     counts = evaluator.evaluate_pending(
-        conn, limit=10, client=object(), inventory=INVENTORY
+        conn, limit=10, backend=object(), inventory=INVENTORY
     )
     assert counts["refused"] == 1
     assert db.get_job(conn, "j1").fit_status == "pending"
+
+
+def test_rubric_loaded_from_config():
+    from resume_tailor.evaluator import RUBRIC, FIT_THRESHOLD, ScoreBreakdown
+    assert RUBRIC["version"] == 1
+    assert sum(s["max"] for s in RUBRIC["components"].values()) == 100
+    assert FIT_THRESHOLD == RUBRIC["fit_threshold"] == 70
+    fields = set(ScoreBreakdown.model_fields)
+    assert fields == set(RUBRIC["components"])

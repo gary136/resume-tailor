@@ -56,7 +56,10 @@ def build_system_prompt(inventory: FactInventory) -> str:
         "each strictly — met only if a fact supports it, citing that fact's id as "
         "evidence_fact_id. Preferred/nice-to-have items are NOT hard requirements; "
         "they belong in the soft score. Then give a 0-100 soft score for overall "
-        "alignment beyond the hard requirements.\n\n"
+        "alignment beyond the hard requirements.\n"
+        "Work authorization: judge sponsorship language against the candidate's "
+        "auth-us-work fact. A posting that excludes visa sponsorship (now or in the "
+        "future) is a hard-requirement miss for an H-1B candidate.\n\n"
         f"Candidate fact inventory:\n{facts}"
     )
 

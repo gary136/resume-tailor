@@ -243,14 +243,14 @@ flowchart LR
     <figcaption>Case 1 — interactive loop</figcaption>
     <pre class="mermaid">
 flowchart TD
-    A["Import resume → becomes master"] --> B["You state what to stress"]
+    A["Intake: build fact inventory<br/>(POC: interview; product: parsed upload)"] --> B["You state what to stress"]
     B --> C["Agent proposes a direction<br/>(what changes, and why)"]
     C --> D{"Direction OK?"}
     D -->|"adjust"| C
     D -->|"yes"| E["Rewrite section by section,<br/>shown as diffs"]
     E --> F{"Accept each change?"}
     F -->|"revise"| E
-    F -->|"done"| G["Save as variant<br/>+ record your preferences"]
+    F -->|"done"| G["Save: first session → master,<br/>later sessions → variants<br/>+ record your preferences"]
     </pre>
   </figure>
 
@@ -298,7 +298,7 @@ flowchart TD
       <tr>
         <td><strong>Truthfulness guardrail</strong></td>
         <td><span class="pill warn">medium</span></td>
-        <td>The tailoring engine must be constrained to <em>reorder, rephrase, emphasize, and trim</em> — never invent experience, inflate titles, or add skills. Concretely: extract a fact inventory from the master once (roles, dates, skills, achievements); every variant is validated against it — any claim not traceable to the inventory is rejected. This is what makes the "fundamentally unqualified" branch enforceable.</td>
+        <td>The tailoring engine must be constrained to <em>reorder, rephrase, emphasize, and trim</em> — never invent experience, inflate titles, or add skills. Concretely: the fact inventory (roles, dates, skills, achievements) is the source of truth, built at intake before the master is written; the master and every variant are validated against it — any claim not traceable to the inventory is rejected. This is what makes the "fundamentally unqualified" branch enforceable.</td>
       </tr>
       <tr>
         <td><strong>Fit scoring</strong></td>
@@ -380,7 +380,7 @@ flowchart TD
     <p>Notes on the tracks:</p>
     <ul>
       <li><strong>Track C should start as a spike, not a build.</strong> The apply engine is the highest-risk component and its findings reshape scope: a two-day probe answering "which ATS forms can we actually fill?" tells you whether stage 4 is worth building at all — better to learn that in week 1 than after the rest is done. Until it lands, everything routes to the manual queue, which works fine.</li>
-      <li><strong>Track B's fit evaluator doesn't need to wait for Track A</strong> — develop and tune it against a hand-written fact inventory of your real resume, swap in the parser's output later.</li>
+      <li><strong>Track B's fit evaluator doesn't need to wait for Track A</strong> — develop and tune it against a hand-drafted fact inventory, swap in the intake-built one when Track A's first session lands.</li>
       <li><strong>What must stay sequential</strong> lives inside Track A: auto-tailoring (A3) genuinely depends on interactive tailoring (A2), because the preference record and the confirmed master are its inputs — this is the phase-1-as-prerequisite dependency, and no amount of parallelism removes it.</li>
       <li><strong>Parallel only pays if there are parallel workers.</strong> Solo, the stage order below is still the right walk. With AI agents doing the building, the three tracks are a textbook case for parallel agents in separate worktrees — independent code, integration only at the contract layer.</li>
     </ul>
@@ -433,7 +433,7 @@ flowchart TD
   <div class="col">
     <h3>What the POC → product split means for the build</h3>
     <ul>
-      <li><strong>The canonical resume format is the bridge.</strong> Your product answer to Q5 — "transform any upload to a same-format output to the engine" — is exactly the data-contract layer from the tracks section. Design that canonical schema on day 1 of the POC, and the POC's parser (PDF → canonical) becomes the first of the product's importers rather than throwaway code.</li>
+      <li><strong>The canonical resume format is the bridge.</strong> Your product answer to Q5 — "transform any upload to a same-format output to the engine" — is exactly the data-contract layer from the tracks section. Design that canonical schema on day 1 of the POC — the intake interview writes straight into it, and the product's importers later target the same schema, so nothing built in the POC is throwaway.</li>
       <li><strong>Build the core as a library, the CLI as a shell.</strong> If the tailoring engine, fit evaluator, and apply engine live in a package the CLI merely calls, the product's web app wraps the same package — the POC→product jump is then a UI + accounts project, not a rewrite.</li>
       <li><strong>Phase 1 begins with authoring, not importing.</strong> Since no existing resume is usable as a starting point, the POC's first interactive session is an intake interview — the agent gathers your facts (roles, dates, achievements, skills) directly from you, builds the fact inventory first, and writes the master from it. This is actually the cleaner path: the fact inventory becomes the source of truth from day 1 instead of being reverse-engineered from a PDF, and the parser/importer drops out of the POC's critical path entirely (it returns at product stage for other users' uploads).</li>
       <li><strong>US-only keeps POC sourcing simple</strong> — Greenhouse/Lever/Ashby public boards + an aggregator API. Structure connectors behind one interface so TW sources (104, CakeResume) slot in at product stage without touching the pipeline.</li>

@@ -1,6 +1,7 @@
 # resume-tailor
 
 Resume tailoring + auto-apply POC. Design doc: `docs/reference/resume-tailor-analysis.html`.
+**Start every session from `docs/tasks/PROGRESS.md`** (project state; update as items finish).
 
 - Stack: Python 3.12 — Typer CLI + core library; anthropic SDK; Playwright (apply engine); SQLite + markdown resume files
 - Check: `python -m compileall -q src` · Test one: `pytest <file>` · Test all: `pytest` · Run: `python -m resume_tailor`

@@ -13,7 +13,7 @@ class Verdict(BaseModel):
 
 def _backend() -> OpenAICompatBackend:
     return OpenAICompatBackend(
-        base_url="https://glm.example/api/v4", api_key="test-key", model="glm-4-flash"
+        base_url="https://glm.example/api/v4", api_key="test-key", model="glm-4.5-flash"
     )
 
 
@@ -47,7 +47,7 @@ def test_complete_structured_parses_valid_response(monkeypatch):
     result = _backend().complete_structured(system="s", user="u", output_model=Verdict)
     assert result == Verdict(label="fits", score=80)
     body = post.calls[0]["json"]
-    assert body["model"] == "glm-4-flash"
+    assert body["model"] == "glm-4.5-flash"
     assert post.calls[0]["headers"]["Authorization"] == "Bearer test-key"
     assert "schema" in body["messages"][1]["content"].lower()
 

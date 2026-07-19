@@ -62,9 +62,18 @@ Live artifacts (update at end of every working session, per turn-end protocol in
       structured outputs, fact inventory prompt-cached in system, three-way branch
       (hard miss→skip; soft>=70→fits; else tailor; threshold via
       RESUME_TAILOR_FIT_THRESHOLD), refusal-safe; CLI `jobs evaluate --limit N`.
-      Tests 29/29, but NOT live-verified — no ANTHROPIC_API_KEY / ant profile on this
-      machine (user-blocked). REMAINING: live evaluation run once key exists; threshold
-      calibration with Gary; Lever/Ashby/aggregator connectors; approval queue UX.
+      Updated 2026-07-19 (later): PROVIDER DECISION (Gary) — API calls use cheap
+      providers; `llm.py` OpenAI-compatible backend (GLM default,
+      RESUME_TAILOR_LLM_{PROVIDER,BASE_URL,API_KEY} + RESUME_TAILOR_MODEL), Anthropic
+      optional. Soft score = 4-component rubric in `src/resume_tailor/config/rubric.yaml`
+      (v1 user-approved; tech_stack 40 + domain 20 + role_shape 20 + seniority 20;
+      calibrate by editing YAML). Sample of 6 jobs evaluated in-session (1 fits · 1
+      tailor · 4 skip); Staff-seniority-skip + 60→tailor confirmed by Gary. Facts v5
+      add auth-us-work (H-1B, seeks GC sponsor); "no sponsorship" postings are hard
+      misses. Master v3 CONFIRMED (stage 1b done). Repo pushed to
+      github.com/gary136/resume-tailor (data/ + PDF git-ignored, verified). Tests
+      35/35; NOT live-verified — needs a GLM (or other) API key (user-blocked).
+      REMAINING: live bulk run on 161 pending; Lever/Ashby connectors; approval queue.
 - [ ] **Stage 3 — auto-tailoring**: generate variants for "no fit" jobs, validated against the
       fact inventory (no fabrication); reuse variants by job family.
 - [ ] **Stage 4 — auto-apply** (only if spike succeeds): ATS adapters one platform at a time,

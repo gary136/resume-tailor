@@ -52,7 +52,7 @@ class OpenAICompatBackend:
             or os.environ.get("RESUME_TAILOR_LLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
         ).rstrip("/")
         self.api_key = api_key or os.environ.get("RESUME_TAILOR_LLM_API_KEY", "")
-        self.model = model or os.environ.get("RESUME_TAILOR_MODEL", "glm-4-flash")
+        self.model = model or os.environ.get("RESUME_TAILOR_MODEL", "glm-4.5-flash")
         self.timeout = timeout
 
     def _chat(self, messages: list[dict]) -> str:

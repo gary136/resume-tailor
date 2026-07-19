@@ -1,0 +1,143 @@
+<title>resume-tailor — status</title>
+<style>
+  :root {
+    --paper: #F5F7F8; --card: #FFFFFF; --ink: #1C2733; --muted: #5A6B7A; --line: #D8DFE4;
+    --need: #B3261E; --need-bg: #F9E9E8;
+    --done: #2E7D4F; --done-bg: #E6F1EA;
+    --now: #0F6B7A; --now-bg: #E3EEF0;
+    --next: #6D4FA3; --next-bg: #ECE6F4;
+    --block: #A66A00; --block-bg: #F6EDDC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131A21; --card: #1B242D; --ink: #E5EBEF; --muted: #93A3B0; --line: #2A3641;
+      --need: #E58B84; --need-bg: #35201E;
+      --done: #6FBF8F; --done-bg: #1B2E24;
+      --now: #4FB3C4; --now-bg: #16303A;
+      --next: #A98FD6; --next-bg: #291F3A;
+      --block: #D9A050; --block-bg: #33291A;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #F5F7F8; --card: #FFFFFF; --ink: #1C2733; --muted: #5A6B7A; --line: #D8DFE4;
+    --need: #B3261E; --need-bg: #F9E9E8; --done: #2E7D4F; --done-bg: #E6F1EA;
+    --now: #0F6B7A; --now-bg: #E3EEF0; --next: #6D4FA3; --next-bg: #ECE6F4;
+    --block: #A66A00; --block-bg: #F6EDDC;
+  }
+  :root[data-theme="dark"] {
+    --paper: #131A21; --card: #1B242D; --ink: #E5EBEF; --muted: #93A3B0; --line: #2A3641;
+    --need: #E58B84; --need-bg: #35201E; --done: #6FBF8F; --done-bg: #1B2E24;
+    --now: #4FB3C4; --now-bg: #16303A; --next: #A98FD6; --next-bg: #291F3A;
+    --block: #D9A050; --block-bg: #33291A;
+  }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: system-ui, "Segoe UI", sans-serif; line-height: 1.5;
+    margin: 0; padding: 2rem 1.25rem 4rem;
+  }
+  main { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+  header { margin-bottom: 0.5rem; }
+  h1 { font-size: 1.45rem; font-weight: 650; margin: 0; letter-spacing: -0.01em; }
+  .stamp {
+    font-family: ui-monospace, "SF Mono", monospace; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  section {
+    background: var(--card); border: 1px solid var(--line); border-left-width: 4px;
+    border-radius: 8px; padding: 0.9rem 1.2rem;
+  }
+  section h2 {
+    font-size: 0.78rem; font-family: ui-monospace, "SF Mono", monospace;
+    letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .count {
+    font-size: 0.7rem; padding: 0.05rem 0.5rem; border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  ul { margin: 0; padding-left: 1.15rem; }
+  li { margin-bottom: 0.4rem; }
+  li:last-child { margin-bottom: 0; }
+  li::marker { color: var(--muted); }
+  .sub { color: var(--muted); font-size: 0.85rem; }
+  .need  { border-left-color: var(--need); }
+  .need h2 { color: var(--need); }  .need .count { background: var(--need-bg); color: var(--need); }
+  .now   { border-left-color: var(--now); }
+  .now h2 { color: var(--now); }    .now .count { background: var(--now-bg); color: var(--now); }
+  .done  { border-left-color: var(--done); }
+  .done h2 { color: var(--done); }  .done .count { background: var(--done-bg); color: var(--done); }
+  .block { border-left-color: var(--block); }
+  .block h2 { color: var(--block); } .block .count { background: var(--block-bg); color: var(--block); }
+  .next  { border-left-color: var(--next); }
+  .next h2 { color: var(--next); }  .next .count { background: var(--next-bg); color: var(--next); }
+  .check { border-left-color: var(--ink); }
+  .check h2 { color: var(--ink); } .check .count { background: var(--paper); color: var(--muted); }
+  .check dl { margin: 0.2rem 0 0; display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 0.9rem; font-size: 0.85rem; }
+  .check dt { font-family: ui-monospace, "SF Mono", monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 0.1rem; white-space: nowrap; }
+  .check dd { margin: 0; }
+  footer { color: var(--muted); font-size: 0.8rem; margin-top: 0.5rem; }
+  footer a { color: var(--now); }
+</style>
+
+<main>
+  <header>
+    <span class="stamp">resume-tailor · updated 2026-07-19</span>
+    <h1>Where we are, in five answers</h1>
+  </header>
+
+  <section class="need">
+    <h2>User blocked <span class="count">0</span></h2>
+    <ul>
+      <li>Nothing hard. Worth a skim when convenient: <code>data/search_profile.yaml</code> — your search keywords/locations seed; edit freely (e.g. add target companies).</li>
+    </ul>
+  </section>
+
+  <section class="now">
+    <h2>Developing now</h2>
+    <ul>
+      <li><strong>PDF rendering DONE</strong> — `resume-tailor render master` produces an ATS-friendly PDF from the markdown master (verified visually); the top direction-check gap is closed.</li>
+      <li><strong>SCREEN COMPLETE — all 167 GitLab jobs triaged: 1 fits · 1 tailor · 165 skip.</strong> Final queue: <em>AI Engineer</em> (fits, 78 — apply with master) and <em>SRE Cloud Cost</em> (tailor, 60 — needs a variant). The three-tier funnel (free keyword/location/sponsorship screen → GLM rubric → Gary) is proven end-to-end.</li>
+    </ul>
+  </section>
+
+  <section class="done">
+    <h2>Accomplished <span class="count">6</span></h2>
+    <ul>
+      <li><strong>Stage 1a</strong> — data contracts frozen, package scaffolded, 20/20 tests green.</li>
+      <li><strong>Stage 1b done</strong> — fact inventory v4 (31 facts); master resume v3 CONFIRMED by Gary 2026-07-19; preference record active. Only gap: work-authorization fact.</li>
+      <li><strong>Fit pipeline validated in-session</strong> — 6 sample jobs stored (1 fits · 1 tailor · 4 skip); Staff-seniority-skip confirmed by Gary. Facts v5 add the H-1B/green-card fact; evaluator now treats "no sponsorship" postings as hard misses.</li>
+      <li><strong>Repo on GitHub</strong> — pushed to github.com/gary136/resume-tailor (private data stays local: data/ and the PDF are git-ignored, verified).</li>
+      <li><strong>Track C spike: GO ✓</strong> — Playwright filled 5/5 fields incl. resume upload on live GitLab &amp; Reddit Greenhouse forms (nothing submitted). Auto-apply (stage 4) is feasible; remaining risks are adapter work: custom questions, reCAPTCHA at submit.</li>
+      <li><strong>Truthfulness policy encoded</strong> — calibrated exaggeration: impressive but never doubt-arousing; checkable facts (employers, titles, dates, degrees) never exaggerated. Example applied: AWS "hundreds of millions" → "multi-million-dollar savings".</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2>Queue <span class="count">0</span></h2>
+    <ul>
+      <li>Nothing blocked — remaining work waits only on the running screen.</li>
+    </ul>
+  </section>
+
+  <section class="next">
+    <h2>Next</h2>
+    <ul>
+      <li><strong>Gary reviews the 2-job queue</strong> → apply decision on AI Engineer; tailoring session for SRE Cloud Cost (stage 1c starts).</li>
+      <li>Grow sourcing: add target-company board slugs to <code>data/search_profile.yaml</code>.</li>
+      <li>Remaining direction-check gaps in order: review-queue UX → answer bank → cover letters → feedback loop.</li>
+      <li><strong>Stage 1c — tailoring loop</strong> — now unblocked (master confirmed); first variant target: the SRE cloud-cost job <span class="sub">(needs you in the loop)</span>.</li>
+    </ul>
+  </section>
+
+  <section class="check">
+    <h2>Direction check <span class="count">plan review · 2026-07-19</span></h2>
+    <dl>
+      <dt>verdict</dt><dd><strong>Plan still sound.</strong> Stages cut cleanly (each makes an ingredient the next needs, each useful alone); no scope drift; your effort shrinks stage by stage as intended.</dd>
+      <dt>gaps</dt><dd>Walking the story "find → score → tailor → <em>make a PDF</em> → submit → hear back" found missing planks: <strong>markdown→PDF rendering</strong> (closed same day — <code>render</code> command ships), review-queue UX, cover letters, answer bank for form questions, and a feedback loop recording which applications got responses.</dd>
+      <dt>cut?</dt><dd>Lever/Ashby connectors look premature — one board already gives more jobs than we can apply to.</dd>
+      <dt>next check</dt><dd>At the wave-2→3 boundary (after screening results are reviewed and the first tailored variant exists).</dd>
+    </dl>
+  </section>
+
+  <footer>Detail lives in the <a href="https://claude.ai/code/artifact/08196fb1-ed1e-4a3e-9296-f1f7b5e80638">full build map</a> and <code>docs/tasks/PROGRESS.md</code>. This page updates automatically whenever project state changes.</footer>
+</main>

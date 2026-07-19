@@ -1,0 +1,350 @@
+<title>resume-tailor — build map</title>
+<style>
+  :root {
+    --paper: #F5F7F8;
+    --card: #FFFFFF;
+    --ink: #1C2733;
+    --muted: #5A6B7A;
+    --line: #D8DFE4;
+    --track-a: #0F6B7A;
+    --track-b: #A66A00;
+    --track-c: #6D4FA3;
+    --done: #2E7D4F;
+    --done-bg: #E3F0E8;
+    --track-a-bg: #E3EEF0;
+    --track-b-bg: #F4EBDC;
+    --track-c-bg: #ECE6F4;
+    --gate-bg: #FBF3E3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131A21;
+      --card: #1B242D;
+      --ink: #E5EBEF;
+      --muted: #93A3B0;
+      --line: #2A3641;
+      --track-a: #4FB3C4;
+      --track-b: #D9A050;
+      --track-c: #A98FD6;
+      --done: #6FBF8F;
+      --done-bg: #1B2E24;
+      --track-a-bg: #16303A;
+      --track-b-bg: #33291A;
+      --track-c-bg: #291F3A;
+      --gate-bg: #2E2617;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #F5F7F8; --card: #FFFFFF; --ink: #1C2733; --muted: #5A6B7A; --line: #D8DFE4;
+    --track-a: #0F6B7A; --track-b: #A66A00; --track-c: #6D4FA3;
+    --done: #2E7D4F; --done-bg: #E3F0E8;
+    --track-a-bg: #E3EEF0; --track-b-bg: #F4EBDC; --track-c-bg: #ECE6F4; --gate-bg: #FBF3E3;
+  }
+  :root[data-theme="dark"] {
+    --paper: #131A21; --card: #1B242D; --ink: #E5EBEF; --muted: #93A3B0; --line: #2A3641;
+    --track-a: #4FB3C4; --track-b: #D9A050; --track-c: #A98FD6;
+    --done: #6FBF8F; --done-bg: #1B2E24;
+    --track-a-bg: #16303A; --track-b-bg: #33291A; --track-c-bg: #291F3A; --gate-bg: #2E2617;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, "Segoe UI", sans-serif;
+    line-height: 1.55;
+    margin: 0;
+    padding: 2.5rem 1.25rem 5rem;
+  }
+  main { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 2.75rem; }
+
+  h1, h2 {
+    font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 { font-size: 2rem; font-weight: 600; letter-spacing: -0.01em; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+  p { margin: 0; max-width: 65ch; }
+  .lede { color: var(--muted); margin-top: 0.5rem; }
+
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .chip {
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .chip.done { color: var(--done); border-color: var(--done); background: var(--done-bg); }
+  .chip.gary { color: var(--track-b); border-color: var(--track-b); }
+  .chip.gated { color: var(--track-c); border-color: var(--track-c); }
+
+  /* status strip */
+  .strip { display: flex; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .strip > div { flex: 1; background: var(--card); padding: 0.9rem 1.1rem; min-width: 0; }
+  .strip .num {
+    font-family: "Avenir Next", system-ui, sans-serif;
+    font-size: 1.6rem; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    display: block;
+  }
+  .strip .num.g { color: var(--done); }
+  .strip small { color: var(--muted); font-size: 0.78rem; }
+
+  .diagram { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1rem; overflow-x: auto; }
+  .diagram pre.mermaid { margin: 0; min-width: 640px; }
+
+  /* track cards */
+  .tracks { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+  .track { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1.1rem 1.2rem; }
+  .track h3 { margin: 0 0 0.2rem; font-size: 1rem; font-family: "Avenir Next", system-ui, sans-serif; }
+  .track.a h3 { color: var(--track-a); }
+  .track.b h3 { color: var(--track-b); }
+  .track.c h3 { color: var(--track-c); }
+  .track ul { margin: 0.6rem 0 0; padding-left: 1.1rem; font-size: 0.88rem; }
+  .track li { margin-bottom: 0.35rem; }
+  .track li::marker { color: var(--muted); }
+  .track .meta { font-size: 0.8rem; color: var(--muted); margin-top: 0.7rem; }
+
+  /* swimlanes */
+  .lanes { display: grid; grid-template-columns: 6.5rem repeat(3, 1fr); gap: 0.5rem; min-width: 700px; }
+  .lanes-scroll { overflow-x: auto; }
+  .lane-head {
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); padding: 0.3rem 0.2rem; align-self: end;
+  }
+  .lane-label {
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    display: flex; align-items: center; padding-right: 0.4rem;
+  }
+  .lane-label.a { color: var(--track-a); }
+  .lane-label.b { color: var(--track-b); }
+  .lane-label.c { color: var(--track-c); }
+  .bar {
+    border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.82rem;
+    border: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 0.3rem; justify-content: center;
+  }
+  .bar strong { font-size: 0.86rem; font-weight: 600; }
+  .bar span { color: var(--muted); font-size: 0.76rem; line-height: 1.4; }
+  .bar.a { background: var(--track-a-bg); border-color: var(--track-a); }
+  .bar.b { background: var(--track-b-bg); border-color: var(--track-b); }
+  .bar.c { background: var(--track-c-bg); border-color: var(--track-c); }
+  .bar.ghost { border-style: dashed; background: transparent; }
+  .bar .chips { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+  .span2 { grid-column: span 2; }
+  .empty { border: none; }
+
+  /* rules list */
+  .rules { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1.2rem 1.4rem; }
+  .rules dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 0.55rem 1.2rem; font-size: 0.9rem; }
+  .rules dt {
+    font-family: ui-monospace, "SF Mono", monospace; font-size: 0.72rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    padding-top: 0.15rem; white-space: nowrap;
+  }
+  .rules dd { margin: 0; max-width: 62ch; }
+
+  .gate-note {
+    background: var(--gate-bg); border: 1px solid var(--track-b);
+    border-radius: 8px; padding: 0.8rem 1.1rem; font-size: 0.88rem; max-width: none;
+  }
+
+  @media (max-width: 640px) {
+    .strip { flex-direction: column; }
+    .rules dl { grid-template-columns: 1fr; gap: 0.1rem 0; }
+    .rules dt { margin-top: 0.6rem; }
+  }
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">resume-tailor · docs/tasks/PROGRESS.md · updated 2026-07-19 (evening)</span>
+    <h1>Build map &amp; parallel plan</h1>
+    <p class="lede">Contracts frozen, phase-1 artifacts (facts v5 · confirmed master · preference
+    record) exist, the apply spike passed, and the job side is live — sourcing real postings and
+    scoring them with GLM against the rubric. Wave 1 is complete; wave 2 is in flight.</p>
+  </header>
+
+  <section aria-label="Status">
+    <div class="strip">
+      <div><span class="num g">1a·1b ✓</span><small>contracts frozen · facts v5 · master confirmed by Gary</small></div>
+      <div><span class="num g">GO ✓</span><small>Playwright spike passed — auto-apply (stage 4) will be built</small></div>
+      <div><span class="num">2</span><small>stage 2 live: 167 jobs stored, GLM rubric-scoring in progress</small></div>
+      <div><span class="num">3</span><small>stages remaining (1c · 3 · 4)</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What depends on what</h2>
+    <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  contracts["Data contracts<br/>FROZEN ✓"]
+  intake["1b · Intake interview<br/>fact inventory + master"]
+  tailorloop["1c · Interactive tailoring<br/>variants + preference record"]
+  autotailor["3 · Auto-tailoring<br/>variants for 'tailor' jobs"]
+  jobside["2 · Job side<br/>connectors + fit evaluator + queue"]
+  spike["C · Playwright spike<br/>~2 days"]
+  gate{"spike<br/>passes?"}
+  autoapply["4 · Auto-apply<br/>ATS adapters"]
+  manual["Manual apply<br/>from queue"]
+  approval[["Batched user approval<br/>(always)"]]
+
+  contracts --> intake --> tailorloop --> autotailor
+  contracts --> jobside
+  contracts --> spike --> gate
+  gate -->|yes| autoapply
+  gate -->|no| manual
+  intake -.->|real fact inventory<br/>replaces fixtures| jobside
+  jobside --> approval
+  approval --> autoapply
+  approval --> manual
+
+  classDef done fill:#2E7D4F,color:#fff,stroke:#2E7D4F
+  classDef a fill:#0F6B7A,color:#fff,stroke:#0F6B7A
+  classDef b fill:#A66A00,color:#fff,stroke:#A66A00
+  classDef c fill:#6D4FA3,color:#fff,stroke:#6D4FA3
+  classDef neutral fill:#5A6B7A,color:#fff,stroke:#5A6B7A
+  class contracts,intake,spike done
+  class tailorloop,autotailor a
+  class jobside b
+  class autoapply,manual c
+  class gate,approval neutral
+</pre>
+    </div>
+    <p class="lede" style="margin-top:0.8rem">The one true serial chain is petrol: intake → tailoring loop → auto-tailoring.
+    Stage 3 cannot start early because its inputs — the confirmed master and your accumulated
+    accept/reject record — only exist once you've used 1b and 1c. Everything else decouples.</p>
+  </section>
+
+  <section>
+    <h2>The three tracks</h2>
+    <div class="tracks">
+      <div class="track a">
+        <h3>Track A — Resume</h3>
+        <span class="eyebrow">stages 1b → 1c → 3</span>
+        <ul>
+          <li>Intake interview → fact inventory → author master (fresh, never imported)</li>
+          <li>Interactive loop: propose → confirm → per-section diffs → accept/reject</li>
+          <li>Auto-tailoring reuses variants by job family</li>
+        </ul>
+        <p class="meta">Bottleneck: you. 1b and 1c need you live — facts and taste are user-only information.</p>
+      </div>
+      <div class="track b">
+        <h3>Track B — Jobs</h3>
+        <span class="eyebrow">stage 2</span>
+        <ul>
+          <li>Greenhouse / Lever / Ashby boards + aggregator behind one connector interface</li>
+          <li>Fit evaluator: hard-requirements gate, then soft score → fits / tailor / skip</li>
+          <li>Manual queue + application log (double-apply blocked at the DB)</li>
+        </ul>
+        <p class="meta">Agent-buildable now against a fixture inventory; swaps to your real facts the day 1b lands.</p>
+      </div>
+      <div class="track c">
+        <h3>Track C — Apply</h3>
+        <span class="eyebrow">spike → stage 4</span>
+        <ul>
+          <li>Spike: can Playwright fill a Greenhouse/Lever form with a dummy resume?</li>
+          <li>If yes: one ATS adapter at a time, dev against dummy data</li>
+          <li>Every submission sits behind batched approval — no exceptions</li>
+        </ul>
+        <p class="meta">Fully agent-buildable; the apply engine never cares how a resume was tailored.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Suggested parallel schedule</h2>
+    <p class="lede" style="margin-bottom:1rem">Three waves. Within a wave, rows run concurrently —
+    one track is yours, the others are delegable. Waves are dependency boundaries, not calendar weeks.</p>
+    <div class="lanes-scroll">
+      <div class="lanes">
+        <div class="lane-head empty"></div>
+        <div class="lane-head">Wave 1 · now</div>
+        <div class="lane-head">Wave 2</div>
+        <div class="lane-head">Wave 3</div>
+
+        <div class="lane-label a">Resume</div>
+        <div class="bar a">
+          <strong>1b — Intake ✓ DONE</strong>
+          <span>Facts v5 (32, incl. H-1B fact), master confirmed, preference record active.</span>
+          <div class="chips"><span class="chip done">done 07-19</span></div>
+        </div>
+        <div class="bar a">
+          <strong>1c — Tailoring loop</strong>
+          <span>Accept/reject sessions; every session feeds the preference record.</span>
+          <div class="chips"><span class="chip gary">Gary in the loop</span></div>
+        </div>
+        <div class="bar a">
+          <strong>3 — Auto-tailoring</strong>
+          <span>Generates variants for “tailor” jobs; validator blocks fabricated claims.</span>
+        </div>
+
+        <div class="lane-label b">Jobs</div>
+        <div class="bar b span2">
+          <strong>2 — Connectors + fit evaluator ⟳ IN FLIGHT</strong>
+          <span>Greenhouse connector live (167 jobs); GLM scoring against the config rubric running over the backlog. Left: Lever/Ashby, approval queue UX.</span>
+        </div>
+        <div class="bar b">
+          <strong>Calibrate thresholds</strong>
+          <span>Tune fits/tailor/skip cutoffs against your judgment on the first few dozen jobs.</span>
+          <div class="chips"><span class="chip gary">Gary judges</span></div>
+        </div>
+
+        <div class="lane-label c">Apply</div>
+        <div class="bar c">
+          <strong>Playwright spike ✓ DONE — GO</strong>
+          <span>5/5 fields filled on live Greenhouse forms, resume upload included.</span>
+          <div class="chips"><span class="chip done">done 07-19</span></div>
+        </div>
+        <div class="bar c">
+          <strong>First ATS adapter</strong>
+          <span>Only if the spike passes. Developed entirely against dummy data.</span>
+          <div class="chips"><span class="chip gated">gated on spike</span></div>
+        </div>
+        <div class="bar c">
+          <strong>4 — Auto-apply, live</strong>
+          <span>Submits only what a batch approval released. Per-ATS, earned, never default.</span>
+          <div class="chips"><span class="chip gated">gated on spike</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="gate-note" style="margin-top:1rem"><strong>Spike result (2026-07-19): GO.</strong>
+    Playwright filled all fields including the resume upload on live GitLab and Reddit Greenhouse
+    postings (nothing submitted). Stage 4 will be built; remaining adapter risks — per-company
+    custom questions and reCAPTCHA at submit — are catalogued in <code>spike/FINDINGS.md</code>.</p>
+  </section>
+
+  <section>
+    <h2>Rules that make the parallelism safe</h2>
+    <div class="rules">
+      <dl>
+        <dt>frozen contracts</dt>
+        <dd>Tracks meet only at the schemas in <code>docs/reference/data-contracts.md</code>. Changing one now requires a dated note there — that's what keeps three concurrent streams from drifting apart.</dd>
+        <dt>fixtures first</dt>
+        <dd>Tracks B and C develop against dummy fact inventories and dummy resumes. Real data flows in when track A produces it; no track waits on another to write code.</dd>
+        <dt>no fabrication</dt>
+        <dd>Every resume bullet must carry <code>&lt;!-- facts: … --&gt;</code> refs into the inventory; the validator rejects anything else. Auto-tailoring inherits this for free.</dd>
+        <dt>approval gate</dt>
+        <dd>Nothing is submitted anywhere without your batch approval. In the store, <code>submitted</code> is unreachable except through <code>approved</code>, and only your action sets that.</dd>
+        <dt>one shot per job</dt>
+        <dd><code>UNIQUE(job_id)</code> in the application log — double-applying is physically impossible, so parallel queue-fillers can't collide.</dd>
+      </dl>
+    </div>
+  </section>
+</main>

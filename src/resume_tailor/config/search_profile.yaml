@@ -1,0 +1,61 @@
+# Search profile — tier-0 prefilter + sourcing targets (Gary, seeded 2026-07-19).
+# Free string matching that runs BEFORE any LLM call: a job must match at least one
+# include keyword in its title, match no exclude keyword, and pass the location rule.
+# Everything else is marked skip with a "[prefilter]" rationale — no tokens spent.
+# Edit freely; a copy at data/search_profile.yaml overrides this default.
+version: 1
+
+title_include:   # at least one must appear in the title (case-insensitive)
+  - engineer
+  - developer
+
+title_exclude:   # any of these in the title -> skip without LLM
+  # non-engineering functions
+  - sales
+  - account executive
+  - business development
+  - customer success
+  - marketing
+  - legal
+  - counsel
+  - recruiter
+  - talent
+  - finance
+  - fp&a
+  - partnerships
+  - enablement
+  # management / leadership tracks
+  - manager
+  - director
+  - vice president
+  - " vp"
+  - head of
+  - chief
+  # seniority beyond current facts (~5 yrs)
+  - staff
+  - principal
+  - distinguished
+
+location_include:  # location string must contain at least one (work-auth: US-based H-1B)
+  - "US"
+  - "United States"
+  - "Americas"
+
+description_exclude:  # phrases anywhere in the JD -> skip free (H-1B needs sponsorship)
+  - "unable to sponsor"
+  - "cannot sponsor"
+  - "will not sponsor"
+  - "not able to sponsor"
+  - "without sponsorship"
+  - "no visa sponsorship"
+  - "not offer sponsorship"
+  - "not provide sponsorship"
+  - "sponsorship is not available"
+  - "not eligible for visa sponsorship"
+
+# Positive signals ("green card", "sponsorship available", "immigration support")
+# are judged by the LLM tier and noted in the rationale — they can't be required,
+# since most postings simply don't mention sponsorship either way.
+
+target_companies:  # boards to fetch (Greenhouse slugs for now; Lever/Ashby later)
+  - gitlab

@@ -112,6 +112,17 @@ def jobs_list(fit_status: str = typer.Option("pending", help="pending|fits|tailo
     typer.echo(f"({len(rows)} jobs with fit_status={fit_status})")
 
 
+@jobs_app.command("prefilter")
+def jobs_prefilter() -> None:
+    """Free keyword/location screen of pending jobs (before any LLM call)."""
+    from resume_tailor import prefilter
+
+    conn = db.connect(files.db_path())
+    counts = prefilter.prefilter_pending(conn)
+    conn.close()
+    typer.echo(f"prefilter: {counts['passed']} passed to LLM tier, {counts['rejected']} rejected free")
+
+
 @jobs_app.command("evaluate")
 def jobs_evaluate(limit: int = typer.Option(10, help="Max pending jobs to evaluate")) -> None:
     """Score pending jobs against the fact inventory (fits / tailor / skip)."""

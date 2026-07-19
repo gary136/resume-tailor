@@ -89,7 +89,9 @@ def build_system_prompt(inventory: FactInventory) -> str:
         "be justifiable from specific facts.\n"
         "Work authorization: judge sponsorship language against the candidate's "
         "auth-us-work fact. A posting that excludes visa sponsorship (now or in the "
-        "future) is a hard-requirement miss for an H-1B candidate.\n\n"
+        "future) is a hard-requirement miss for an H-1B candidate. If the posting "
+        "explicitly offers visa/green-card sponsorship or immigration support, say so "
+        "in the rationale — it is a strong plus for this candidate.\n\n"
         f"Candidate fact inventory:\n{facts}"
     )
 

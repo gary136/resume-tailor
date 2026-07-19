@@ -6,10 +6,7 @@ Update this file the moment an item finishes (write-as-you-go rule).
 Design reference: `docs/reference/resume-tailor-analysis.html` (mirror of
 https://claude.ai/code/artifact/c6a36252-1504-4337-a407-9649ce021d2d — keep both in sync when either changes).
 
-Agent onboarding: `docs/handoffs/HANDOFF-stage2-screen-complete.md` (latest handoff);
-artifact mirrors in `docs/artifacts/` (commit fresh copies when the live pages change).
-
-Live artifacts (update automatically on state change, per turn-end protocol in `.claude/CLAUDE.md`):
+Live artifacts (update at end of every working session, per turn-end protocol in `.claude/CLAUDE.md`):
 - Status (5-answer overview): https://claude.ai/code/artifact/9d6031eb-274c-49d5-af3d-2aa380e5afb5
 - Build map (dependency graph + parallel plan): https://claude.ai/code/artifact/08196fb1-ed1e-4a3e-9296-f1f7b5e80638
 

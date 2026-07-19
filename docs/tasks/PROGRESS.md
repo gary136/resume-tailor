@@ -39,7 +39,7 @@ Live artifacts (update automatically on state change, per turn-end protocol in `
       clean, `resume-tailor init && status` ran. Env: `.venv` (Python 3.13.1 Homebrew).
 
 ## Next (delivery order — each stage usable on its own)
-- [~] **Stage 1b — phase-1 intake**: MOSTLY DONE 2026-07-19. Constraint amended: repo-root
+- [x] **Stage 1b — phase-1 intake**: DONE 2026-07-19 (master CONFIRMED; facts v5 incl. additions + auth-us-work). Constraint amended: repo-root
       `Hung-Ting_Lee_resume.pdf` approved as seed reference (git-ignored, PII); `~/US/job seek/`
       still banned. Fact inventory v2 (30 facts) built from PDF + verification batch: GEICO
       role/contact confirmed. POLICY CHANGE (Gary): goal is interviews, not accuracy —
@@ -48,8 +48,6 @@ Live artifacts (update automatically on state change, per turn-end protocol in `
       data-contracts.md). Facts v3: GEICO metrics at plausible tier; AWS savings recalibrated
       "hundreds of millions" → "multi-million-dollar". Master resume v2, validator-clean.
       Preference record carries the policy + calibration heuristics.
-      REMAINING: Gary said "yes, additions" exist post-PDF but hasn't listed them; master
-      still `status: draft` pending his read-through.
 - [ ] **Stage 1c — interactive tailoring loop**: propose direction → confirm → section-by-section
       diffs → accept/reject → save variant, keyed by job family.
 - [x] 2026-07-19 — **Track C spike: GO.** Playwright filled 5/5 fields (incl. resume PDF upload)
@@ -74,9 +72,12 @@ Live artifacts (update automatically on state change, per turn-end protocol in `
       tailor · 4 skip); Staff-seniority-skip + 60→tailor confirmed by Gary. Facts v5
       add auth-us-work (H-1B, seeks GC sponsor); "no sponsorship" postings are hard
       misses. Master v3 CONFIRMED (stage 1b done). Repo pushed to
-      github.com/gary136/resume-tailor (data/ + PDF git-ignored, verified). Tests
-      35/35; NOT live-verified — needs a GLM (or other) API key (user-blocked).
-      REMAINING: live bulk run on 161 pending; Lever/Ashby connectors; approval queue.
+      github.com/gary136/resume-tailor (data/ + PDF git-ignored, verified).
+      SCREEN COMPLETE 2026-07-19 (late): tier-0 prefilter added (search_profile.yaml —
+      title/location/sponsorship/citizenship phrases; 123 rejected free, Austria/US
+      word-boundary bug caught+tested) → GLM scored survivors → ALL 167 triaged:
+      1 fits (AI Engineer 78) · 1 tailor (SRE Cloud Cost 60) · 165 skip. Tests 54/54.
+      REMAINING: review-queue UX; approval queue; more boards when Gary names targets.
 - [ ] **Stage 3 — auto-tailoring**: generate variants for "no fit" jobs, validated against the
       fact inventory (no fabrication); reuse variants by job family.
 - [ ] **Stage 4 — auto-apply** (only if spike succeeds): ATS adapters one platform at a time,
@@ -84,8 +85,8 @@ Live artifacts (update automatically on state change, per turn-end protocol in `
 
 ## Gaps found in plan review (2026-07-19, not yet scheduled)
 
-- [ ] **Markdown → PDF rendering** — variants are .md files but ATS forms upload PDFs;
-      nothing in any stage renders them. Needed before stage 4 can submit anything real.
+- [x] **Markdown → PDF rendering** — DONE 2026-07-19: `resume-tailor render <id>`
+      (markdown → styled HTML → Chromium PDF); master.pdf verified visually.
 - [ ] **Review queue UX** — how Gary actually reviews fits/tailor verdicts comfortably
       (CLI table vs artifact page); currently raw SQL/CLI output.
 - [ ] **Cover letters** — many applications want one; absent from every stage.

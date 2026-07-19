@@ -86,7 +86,7 @@ def test_evaluate_pending_writes_results(conn, monkeypatch):
     counts = evaluator.evaluate_pending(
         conn, limit=10, backend=object(), inventory=INVENTORY, threshold=70
     )
-    assert counts == {"fits": 0, "tailor": 2, "skip": 0, "refused": 0}
+    assert counts == {"fits": 0, "tailor": 2, "skip": 0, "refused": 0, "error": 0}
 
     job = db.get_job(conn, "j1")
     assert job.fit_status == "tailor"
@@ -113,3 +113,21 @@ def test_rubric_loaded_from_config():
     assert FIT_THRESHOLD == RUBRIC["fit_threshold"] == 70
     fields = set(ScoreBreakdown.model_fields)
     assert fields == set(RUBRIC["components"])
+
+
+def test_backend_exception_leaves_job_pending_and_batch_alive(conn, monkeypatch):
+    db.add_job(conn, _job("j1"))
+    db.add_job(conn, _job("j2"))
+    calls = []
+
+    def flaky(backend, system, job):
+        calls.append(job.job_id)
+        if job.job_id == "j1":
+            raise TimeoutError("read timeout")
+        return _evaluation(soft_score=80)
+
+    monkeypatch.setattr(evaluator, "evaluate_job", flaky)
+    counts = evaluator.evaluate_pending(conn, limit=10, backend=object(), inventory=INVENTORY)
+    assert counts["error"] == 1 and counts["fits"] == 1
+    assert db.get_job(conn, "j1").fit_status == "pending"
+    assert db.get_job(conn, "j2").fit_status == "fits"

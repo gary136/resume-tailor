@@ -134,10 +134,15 @@ def evaluate_pending(
         (limit,),
     ).fetchall()
 
-    counts = {"fits": 0, "tailor": 0, "skip": 0, "refused": 0}
+    counts = {"fits": 0, "tailor": 0, "skip": 0, "refused": 0, "error": 0}
     for row in rows:
         job = db.get_job(conn, row["job_id"])
-        evaluation = evaluate_job(backend, system_prompt, job)
+        try:
+            evaluation = evaluate_job(backend, system_prompt, job)
+        except Exception as exc:  # timeout/HTTP blip: leave job pending, keep batch alive
+            print(f"error on {job.title[:40]!r}: {type(exc).__name__}: {exc}")
+            counts["error"] += 1
+            continue
         if evaluation is None:
             counts["refused"] += 1
             continue

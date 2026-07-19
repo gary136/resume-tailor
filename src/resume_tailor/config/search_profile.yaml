@@ -52,6 +52,10 @@ description_exclude:  # phrases anywhere in the JD -> skip free (H-1B needs spon
   - "not provide sponsorship"
   - "sponsorship is not available"
   - "not eligible for visa sponsorship"
+  - "must be a united states citizen"
+  - "must be a u.s. citizen"
+  - "us citizenship required"
+  - "u.s. citizenship is required"
 
 # Positive signals ("green card", "sponsorship available", "immigration support")
 # are judged by the LLM tier and noted in the rationale — they can't be required,

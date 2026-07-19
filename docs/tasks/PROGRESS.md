@@ -6,6 +6,10 @@ Update this file the moment an item finishes (write-as-you-go rule).
 Design reference: `docs/reference/resume-tailor-analysis.html` (mirror of
 https://claude.ai/code/artifact/c6a36252-1504-4337-a407-9649ce021d2d — keep both in sync when either changes).
 
+Live artifacts (update at end of every working session, per turn-end protocol in `.claude/CLAUDE.md`):
+- Status (5-answer overview): https://claude.ai/code/artifact/9d6031eb-274c-49d5-af3d-2aa380e5afb5
+- Build map (dependency graph + parallel plan): https://claude.ai/code/artifact/08196fb1-ed1e-4a3e-9296-f1f7b5e80638
+
 ## Done
 
 - [x] 2026-07-18 — Design analysis complete: phase model (phase 1 interactive tailoring is
@@ -23,20 +27,44 @@ https://claude.ai/code/artifact/c6a36252-1504-4337-a407-9649ce021d2d — keep bo
 - [x] 2026-07-19 — Consistency pass on design doc (intake-interview decision backported to
       case-1 diagram, guardrail row, parser references). Artifact + repo copy in sync.
 
-## Next (delivery order — each stage usable on its own)
+- [x] 2026-07-19 — **Stage 1a — foundations** done: data contracts FROZEN after user review
+      (`docs/reference/data-contracts.md` — YAML fact inventory, per-bullet `<!-- facts: … -->`
+      traceability, hard UNIQUE(job_id) double-apply guard, Python 3.13). Package scaffolded:
+      contracts as pydantic models, no-fabrication validator, SQLite store with enforced
+      application state machine (approved only via user batch approval), Typer CLI
+      (`init`/`status` working, later stages stubbed). Verified: pytest 20/20, compileall
+      clean, `resume-tailor init && status` ran. Env: `.venv` (Python 3.13.1 Homebrew).
 
-- [ ] **Stage 1a — foundations**: freeze canonical resume schema + data contracts (resume
-      record, fact inventory, job record, application log); scaffold package
-      (`src/resume_tailor/` core library + Typer CLI shell, pytest, SQLite store).
-- [ ] **Stage 1b — phase-1 intake**: interactive intake interview → fact inventory → author
-      master resume + start preference record. (No import — authoring only in POC.)
+## Next (delivery order — each stage usable on its own)
+- [~] **Stage 1b — phase-1 intake**: MOSTLY DONE 2026-07-19. Constraint amended: repo-root
+      `Hung-Ting_Lee_resume.pdf` approved as seed reference (git-ignored, PII); `~/US/job seek/`
+      still banned. Fact inventory v2 (30 facts) built from PDF + verification batch: GEICO
+      role/contact confirmed. POLICY CHANGE (Gary): goal is interviews, not accuracy —
+      calibrated exaggeration allowed (impressive but never doubt-arousing), impossible claims
+      never; `Fact.fidelity: verified|plausible` added (contract amendment noted in
+      data-contracts.md). Facts v3: GEICO metrics at plausible tier; AWS savings recalibrated
+      "hundreds of millions" → "multi-million-dollar". Master resume v2, validator-clean.
+      Preference record carries the policy + calibration heuristics.
+      REMAINING: Gary said "yes, additions" exist post-PDF but hasn't listed them; master
+      still `status: draft` pending his read-through.
 - [ ] **Stage 1c — interactive tailoring loop**: propose direction → confirm → section-by-section
       diffs → accept/reject → save variant, keyed by job family.
-- [ ] **Track C spike (parallel, ~2 days)**: can Playwright fill a Greenhouse/Lever form with a
-      dummy resume? Outcome decides whether stage 4 gets built.
-- [ ] **Stage 2 — job side**: US sourcing connectors (Greenhouse/Lever/Ashby boards, aggregator
-      API) behind one interface; fit evaluator (hard requirements gate + soft score, three-way
-      branch: fits / tailor / fundamentally-unqualified-skip); manual queue + application log.
+- [x] 2026-07-19 — **Track C spike: GO.** Playwright filled 5/5 fields (incl. resume PDF upload)
+      on live GitLab + Reddit Greenhouse postings; nothing submitted (no submit code path).
+      Stage 4 is feasible. Findings + remaining adapter risks (custom questions, reCAPTCHA at
+      submit, self-ID policy): `spike/FINDINGS.md`. Bonus: public board API validated for
+      stage 2 (`boards-api.greenhouse.io/v1/boards/<board>/jobs?content=true`, no auth).
+- [~] **Stage 2 — job side**: STARTED 2026-07-19. Greenhouse connector done
+      (`connectors/greenhouse.py`) + CLI `jobs fetch|list` — verified live: 167 GitLab jobs
+      stored, refetch dedups via UNIQUE(source, external_id). Facts v4 (31 facts: Gary's
+      GEICO MCP/AI-chat addition + Shiyou live w/ 100+ users); master v3 validator-clean.
+      Fit evaluator BUILT 2026-07-19 (`evaluator.py`): claude-opus-4-8 via messages.parse
+      structured outputs, fact inventory prompt-cached in system, three-way branch
+      (hard miss→skip; soft>=70→fits; else tailor; threshold via
+      RESUME_TAILOR_FIT_THRESHOLD), refusal-safe; CLI `jobs evaluate --limit N`.
+      Tests 29/29, but NOT live-verified — no ANTHROPIC_API_KEY / ant profile on this
+      machine (user-blocked). REMAINING: live evaluation run once key exists; threshold
+      calibration with Gary; Lever/Ashby/aggregator connectors; approval queue UX.
 - [ ] **Stage 3 — auto-tailoring**: generate variants for "no fit" jobs, validated against the
       fact inventory (no fabrication); reuse variants by job family.
 - [ ] **Stage 4 — auto-apply** (only if spike succeeds): ATS adapters one platform at a time,

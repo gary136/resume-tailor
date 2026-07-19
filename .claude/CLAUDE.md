@@ -14,7 +14,9 @@ Hard constraints:
 - Submissions always behind batched user approval; auto-apply per-ATS, earned not default.
 - Design core as a library, CLI as a thin shell (product stage wraps the same core in a web app).
 
-Turn-end protocol (user, 2026-07-19): end every working turn with the 5-part report — **User blocked** · **Developing** · **Accomplished** · **Queue** · **Next** — per `~/.claude/skills/project-status/SKILL.md` (canonical definition). If nothing blocks, don't stop: continue with the next unblocked item in PROGRESS.md. Keep the status artifact in sync (URL in PROGRESS.md).
+Turn-end protocol (user, 2026-07-19): end every working turn with the 5-part report — **User blocked** · **Developing** · **Accomplished** · **Queue** · **Next** — per `~/.claude/skills/project-status/SKILL.md` (canonical definition). If nothing blocks, don't stop: continue with the next unblocked item in PROGRESS.md. Artifacts (status page, build map) update AUTOMATICALLY in the same turn as any state change they depict — never wait for the user to ask; stale artifacts are bugs. URLs in PROGRESS.md.
+
+Plan-review principle (user, 2026-07-19): run the 8-question framework (`~/.claude/skills/plan-review`) before starting any new stage/wave and recurringly at boundaries; explain ELI5; publish the result as a "Direction check" section in the status artifact.
 
 Commit at every completed, verified milestone (stage done, spike concluded, tests green) — don't accumulate days of work uncommitted. Push if a remote exists. (Lesson 2026-07-19: stages 1a–2 sat uncommitted for a full session.)
 

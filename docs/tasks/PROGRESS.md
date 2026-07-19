@@ -79,6 +79,21 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 - [ ] **Stage 4 — auto-apply** (only if spike succeeds): ATS adapters one platform at a time,
       always behind batched approval.
 
+## Gaps found in plan review (2026-07-19, not yet scheduled)
+
+- [ ] **Markdown → PDF rendering** — variants are .md files but ATS forms upload PDFs;
+      nothing in any stage renders them. Needed before stage 4 can submit anything real.
+- [ ] **Review queue UX** — how Gary actually reviews fits/tailor verdicts comfortably
+      (CLI table vs artifact page); currently raw SQL/CLI output.
+- [ ] **Cover letters** — many applications want one; absent from every stage.
+- [ ] **Application answer bank** — forms ask standard questions (work auth, salary,
+      start date, "why us"); facts cover some, no structured answers store.
+- [ ] **Outcome feedback loop** — application log records submissions but nothing records
+      responses/interviews to learn which variants work.
+- [?] **Lever/Ashby connectors possibly premature** — one Greenhouse board already yields
+      more viable jobs than can be applied to promptly; more sources may add noise before
+      the apply loop exists.
+
 ## Parking lot (product stage, not POC)
 
 - Web/mobile UI wrapping the same core library; multi-user accounts.

@@ -57,6 +57,19 @@ def _stub(stage: str) -> None:
 
 
 @app.command()
+def render(resume_id: str = typer.Argument("master")) -> None:
+    """Render a resume markdown file to PDF (data/resumes/<id>.pdf)."""
+    from resume_tailor.render import render_pdf
+
+    src = files.resumes_dir() / f"{resume_id}.md"
+    if not src.exists():
+        typer.echo(f"no such resume: {src}")
+        raise typer.Exit(code=1)
+    out = render_pdf(src)
+    typer.echo(f"rendered {out}")
+
+
+@app.command()
 def intake() -> None:
     """Intake interview -> fact inventory -> master resume. (stage 1b)"""
     _stub("stage 1b (phase-1 intake)")

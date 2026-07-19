@@ -2,7 +2,7 @@ import pytest
 
 from resume_tailor import evaluator
 from resume_tailor.contracts import Fact, FactInventory, HardRequirement, JobRecord
-from resume_tailor.evaluator import FitEvaluation, build_system_prompt, decide_fit_status
+from resume_tailor.evaluator import FitEvaluation, ScoreBreakdown, build_system_prompt, decide_fit_status
 from resume_tailor.store import db
 
 INVENTORY = FactInventory(
@@ -16,12 +16,22 @@ INVENTORY = FactInventory(
 NOW = "2026-07-19T12:00:00"
 
 
-def _evaluation(**overrides) -> FitEvaluation:
+def _breakdown(total: int) -> ScoreBreakdown:
+    # distribute a target total across the rubric for test convenience
+    tech = min(total, 40)
+    rest = total - tech
+    return ScoreBreakdown(
+        tech_stack=tech, domain=min(rest, 20),
+        role_shape=min(max(rest - 20, 0), 20), seniority=min(max(rest - 40, 0), 20),
+    )
+
+
+def _evaluation(soft_score: int = 80, **overrides) -> FitEvaluation:
     defaults = dict(
         hard_requirements=[
             HardRequirement(requirement="Python", met=True, evidence_fact_id="skill-backend")
         ],
-        soft_score=80,
+        score_breakdown=_breakdown(soft_score),
         rationale="Good match.",
         suggested_job_family="backend-distributed",
     )
@@ -31,7 +41,7 @@ def _evaluation(**overrides) -> FitEvaluation:
 def test_hard_miss_means_skip():
     ev = _evaluation(hard_requirements=[
         HardRequirement(requirement="US security clearance", met=False),
-    ], soft_score=95)
+    ], score_breakdown=_breakdown(95))
     assert decide_fit_status(ev, threshold=70) == "skip"
 
 

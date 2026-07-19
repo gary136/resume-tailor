@@ -26,6 +26,31 @@ MODEL = os.environ.get("RESUME_TAILOR_MODEL", "claude-opus-4-8")
 FIT_THRESHOLD = int(os.environ.get("RESUME_TAILOR_FIT_THRESHOLD", "70"))
 
 
+class ScoreBreakdown(BaseModel):
+    """Rubric components; the code sums them — the model never emits a total."""
+
+    tech_stack: int = Field(
+        ge=0, le=40,
+        description="Overlap of the posting's technologies with the fact inventory: "
+        "40 = candidate's daily stack, ~20 = adjacent/transferable, 0 = disjoint",
+    )
+    domain: int = Field(
+        ge=0, le=20,
+        description="Industry/problem-domain familiarity per the facts (e.g. insurance "
+        "data, billing pipelines): 20 = same domain, 0 = unfamiliar",
+    )
+    role_shape: int = Field(
+        ge=0, le=20,
+        description="Role type vs candidate's experience: backend/full-stack IC high; "
+        "SRE/sales/management low unless facts support it",
+    )
+    seniority: int = Field(
+        ge=0, le=20,
+        description="Level alignment with the candidate's experience: mid/senior high; "
+        "staff/principal or entry-level low",
+    )
+
+
 class FitEvaluation(BaseModel):
     """Structured output the model must return for one job."""
 
@@ -33,16 +58,17 @@ class FitEvaluation(BaseModel):
         description="Every non-negotiable requirement in the posting (degrees, years, "
         "authorizations, must-have technologies), each judged against the fact inventory"
     )
-    soft_score: int = Field(
-        ge=0, le=100,
-        description="Alignment of the candidate's profile with the role beyond hard "
-        "requirements: 0 = unrelated field, 100 = ideal background",
-    )
+    score_breakdown: ScoreBreakdown
     rationale: str = Field(description="2-3 sentences explaining the scores")
     suggested_job_family: str = Field(
         description="Short kebab-case family slug for resume-variant reuse, "
         "e.g. 'backend-distributed', 'full-stack-product'"
     )
+
+    @property
+    def soft_score(self) -> int:
+        b = self.score_breakdown
+        return b.tech_stack + b.domain + b.role_shape + b.seniority
 
 
 def build_system_prompt(inventory: FactInventory) -> str:
@@ -55,8 +81,10 @@ def build_system_prompt(inventory: FactInventory) -> str:
         "degrees, minimum years, work authorization, must-have technologies) and judge "
         "each strictly — met only if a fact supports it, citing that fact's id as "
         "evidence_fact_id. Preferred/nice-to-have items are NOT hard requirements; "
-        "they belong in the soft score. Then give a 0-100 soft score for overall "
-        "alignment beyond the hard requirements.\n"
+        "they belong in the soft-score rubric. Then score four rubric components "
+        "(tech_stack 0-40, domain 0-20, role_shape 0-20, seniority 0-20) strictly "
+        "per their field descriptions — never a holistic guess; each component must "
+        "be justifiable from specific facts.\n"
         "Work authorization: judge sponsorship language against the candidate's "
         "auth-us-work fact. A posting that excludes visa sponsorship (now or in the "
         "future) is a hard-requirement miss for an H-1B candidate.\n\n"

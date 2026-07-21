@@ -155,6 +155,7 @@ def evaluate_pending(
             fit_status=status,
             hard_requirements=evaluation.hard_requirements,
             soft_score=evaluation.soft_score,
+            score_breakdown=evaluation.score_breakdown.model_dump(),
             fit_rationale=evaluation.rationale,
             job_family=evaluation.suggested_job_family,
             evaluated_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),

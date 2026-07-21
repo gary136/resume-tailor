@@ -34,6 +34,10 @@ def connect(db_path: Path | str) -> sqlite3.Connection:
 def init_db(conn: sqlite3.Connection) -> None:
     schema = resources.files("resume_tailor.store").joinpath("schema.sql").read_text()
     conn.executescript(schema)
+    # additive migration for stores created before score_breakdown existed
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(jobs)")}
+    if "score_breakdown" not in cols:
+        conn.execute("ALTER TABLE jobs ADD COLUMN score_breakdown TEXT")
     conn.commit()
 
 
@@ -48,13 +52,18 @@ def add_job(conn: sqlite3.Connection, job: JobRecord) -> None:
         if job.hard_requirements is None
         else json.dumps([r.model_dump() for r in job.hard_requirements])
     )
+    row["score_breakdown"] = (
+        None if job.score_breakdown is None else json.dumps(job.score_breakdown)
+    )
     conn.execute(
         """INSERT INTO jobs (job_id, source, external_id, url, company, title, location,
                              remote, description_text, job_family, fetched_at, fit_status,
-                             hard_requirements, soft_score, fit_rationale, evaluated_at)
+                             hard_requirements, soft_score, score_breakdown, fit_rationale,
+                             evaluated_at)
            VALUES (:job_id, :source, :external_id, :url, :company, :title, :location,
                    :remote, :description_text, :job_family, :fetched_at, :fit_status,
-                   :hard_requirements, :soft_score, :fit_rationale, :evaluated_at)""",
+                   :hard_requirements, :soft_score, :score_breakdown, :fit_rationale,
+                   :evaluated_at)""",
         row,
     )
     conn.commit()
@@ -66,6 +75,8 @@ def get_job(conn: sqlite3.Connection, job_id: str) -> JobRecord | None:
         return None
     data = dict(row)
     data["remote"] = None if data["remote"] is None else bool(data["remote"])
+    if data.get("score_breakdown"):
+        data["score_breakdown"] = json.loads(data["score_breakdown"])
     if data["hard_requirements"] is not None:
         data["hard_requirements"] = [
             HardRequirement.model_validate(r) for r in json.loads(data["hard_requirements"])
@@ -83,15 +94,18 @@ def update_job_fit(
     fit_rationale: str,
     job_family: str | None,
     evaluated_at: str,
+    score_breakdown: dict[str, int] | None = None,
 ) -> None:
     conn.execute(
         """UPDATE jobs SET fit_status = ?, hard_requirements = ?, soft_score = ?,
-                           fit_rationale = ?, job_family = ?, evaluated_at = ?
+                           score_breakdown = ?, fit_rationale = ?, job_family = ?,
+                           evaluated_at = ?
            WHERE job_id = ?""",
         (
             fit_status,
             json.dumps([r.model_dump() for r in hard_requirements]),
             soft_score,
+            None if score_breakdown is None else json.dumps(score_breakdown),
             fit_rationale,
             job_family,
             evaluated_at,

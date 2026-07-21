@@ -128,6 +128,7 @@ class JobRecord(BaseModel):
     fit_status: FitStatus = "pending"
     hard_requirements: Optional[list[HardRequirement]] = None
     soft_score: Optional[int] = Field(default=None, ge=0, le=100)
+    score_breakdown: Optional[dict[str, int]] = None
     fit_rationale: Optional[str] = None
     evaluated_at: Optional[str] = None
 

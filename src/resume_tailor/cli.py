@@ -123,6 +123,19 @@ def jobs_prefilter() -> None:
     typer.echo(f"prefilter: {counts['passed']} passed to LLM tier, {counts['rejected']} rejected free")
 
 
+@jobs_app.command("review")
+def jobs_review(
+    status: str = typer.Option("fits,tailor", help="Comma-separated: fits,tailor,skip,pending"),
+) -> None:
+    """Readable review queue: verdicts with rubric breakdown, evidence, and URLs."""
+    from resume_tailor.review import render_queue
+
+    conn = db.connect(files.db_path())
+    db.init_db(conn)  # applies additive migrations to older stores
+    typer.echo(render_queue(conn, tuple(s.strip() for s in status.split(","))))
+    conn.close()
+
+
 @jobs_app.command("evaluate")
 def jobs_evaluate(limit: int = typer.Option(10, help="Max pending jobs to evaluate")) -> None:
     """Score pending jobs against the fact inventory (fits / tailor / skip)."""

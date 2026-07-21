@@ -100,8 +100,10 @@ same file path in the owning conversation, or pass `url:` from a new one.
 
 - [x] **Markdown → PDF rendering** — DONE 2026-07-19: `resume-tailor render <id>`
       (markdown → styled HTML → Chromium PDF); master.pdf verified visually.
-- [ ] **Review queue UX** — how Gary actually reviews fits/tailor verdicts comfortably
-      (CLI table vs artifact page); currently raw SQL/CLI output.
+- [x] **Review queue UX** — DONE 2026-07-20: `resume-tailor jobs review [--status ...]`
+      renders verdict · score · rubric breakdown · hard-requirement evidence · rationale ·
+      apply URL, fits before tailor. Rubric sub-scores now persisted
+      (`jobs.score_breakdown`, additive contract amendment + auto-migration).
 - [ ] **Cover letters** — many applications want one; absent from every stage.
 - [ ] **Application answer bank** — forms ask standard questions (work auth, salary,
       start date, "why us"); facts cover some, no structured answers store.

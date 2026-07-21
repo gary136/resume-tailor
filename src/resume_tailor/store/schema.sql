@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   fit_status        TEXT NOT NULL DEFAULT 'pending',
   hard_requirements TEXT,
   soft_score        INTEGER,
+  score_breakdown   TEXT,           -- JSON: rubric components (see config/rubric.yaml)
   fit_rationale     TEXT,
   evaluated_at      TEXT,
   UNIQUE (source, external_id),

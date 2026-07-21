@@ -10,6 +10,11 @@ Provenance note: the `UNIQUE(job_id)` constraint was not in the original design 
 the doc assigns the application log the job of "preventing double-applying"; the constraint is
 the chosen mechanism for that, approved at freeze.
 
+**Amendment 2026-07-20 (additive):** `jobs.score_breakdown` (JSON of the rubric
+components behind `soft_score`) — needed so the review queue can show *why* a score
+landed. Additive only; `init_db` migrates existing stores with ALTER TABLE, and
+readers tolerate its absence.
+
 **Amendment 2026-07-19 (user decision, post-freeze):** `Fact` gains an optional
 `fidelity: verified | plausible` field (default `verified`). Purpose of the tool is getting
 interviews, not documentary accuracy: *exaggerated* claims are acceptable, *impossible* ones
@@ -122,6 +127,7 @@ CREATE TABLE jobs (
                     -- pending | fits | tailor | skip
   hard_requirements TEXT,                    -- JSON: [{requirement, met, evidence_fact_id|null}]
   soft_score        INTEGER,                 -- 0–100, only meaningful when hard reqs all met
+  score_breakdown   TEXT,                    -- JSON: rubric components (config/rubric.yaml)
   fit_rationale     TEXT,
   evaluated_at      TEXT,
   UNIQUE (source, external_id),

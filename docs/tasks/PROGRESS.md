@@ -10,6 +10,22 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 - Status (5-answer overview): https://claude.ai/code/artifact/9d6031eb-274c-49d5-af3d-2aa380e5afb5
 - Build map (dependency graph + parallel plan): https://claude.ai/code/artifact/08196fb1-ed1e-4a3e-9296-f1f7b5e80638
 
+## Immediate next (as of 2026-07-19 end of session — all three user-gated)
+
+1. **Apply decision — AI Engineer @ GitLab** (fits, soft 78): master.pdf is ready
+   (`resume-tailor render master`); submission is manual until stage 4.
+2. **First tailoring session — SRE Cloud Cost @ GitLab** (tailor, soft 60): stage 1c,
+   interactive with Gary; creates the `sre-cloud-cost` variant.
+3. **Sourcing growth**: Gary names target companies → add Greenhouse slugs to
+   `data/search_profile.yaml` → `jobs fetch <slug>` → `jobs prefilter` → `jobs evaluate`.
+
+Runtime notes for a fresh agent: GLM key in git-ignored `data/.env`
+(`export RESUME_TAILOR_LLM_API_KEY=$(cut -d= -f2 data/.env)`); model glm-4.5-flash
+(free tier, ~80s/job, occasional >300s timeouts — failed jobs stay pending, re-run);
+protocols (turn-end report, artifact auto-update, plan-review principle, truthfulness
+policy, commit-at-milestone) in `.claude/CLAUDE.md`; artifact URLs above — republish
+same file path in the owning conversation, or pass `url:` from a new one.
+
 ## Done
 
 - [x] 2026-07-18 — Design analysis complete: phase model (phase 1 interactive tailoring is

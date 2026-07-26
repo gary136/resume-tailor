@@ -23,6 +23,8 @@ Live artifacts (update at end of every working session, per turn-end protocol in
   (user-level, Azure/AWS); never pitch infra-engineer identity.
 - **Sourcing wave 2 recorded**: 5 Greenhouse boards fetched (2,104 jobs), 24 survivors,
   7 scored (5 fits total · 1 tailor), 17 parked pending — fixtures, not harvest.
+  NOTE (fresh-review finding): the 7 wave-2 verdicts have run-evidence but no Gary
+  spot-check yet — sample them during wave-3 fixture use.
 
 ## Immediate next (as of 2026-07-19 end of session — all three user-gated)
 

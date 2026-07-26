@@ -3,18 +3,39 @@
 # include keyword in its title, match no exclude keyword, and pass the location rule.
 # Everything else is marked skip with a "[prefilter]" rationale — no tokens spent.
 # Edit freely; a copy at data/search_profile.yaml overrides this default.
-version: 1
+version: 2   # 2026-07-26: widened includes, whole-word/range-rescue excludes, foreign-location block, Ashby+Lever sources
 
 title_include:   # at least one must appear in the title (case-insensitive)
   - engineer
   - developer
+  - programmer
+  - architect          # but see exclude: solutions/adoption/enterprise architect are sales-eng
+  - "sde"
+  - "swe"
+  - full stack
+  - full-stack
+  - fullstack
+  - backend
+  - front end
+  - front-end
+  - software
+  - member of technical staff
+  - applied scientist
 
-title_exclude:   # any of these in the title -> skip without LLM
+title_exclude:   # any of these in the title -> skip without LLM.
+  # A trailing "!" means whole-word match only (won't eat substrings /
+  # "Senior Staff" ranges); no "!" means plain substring.
   # non-engineering functions
   - sales
   - account executive
   - business development
   - customer success
+  # customer-facing "architect" roles (sales/pre-sales engineering, not SWE)
+  - solutions architect
+  - adoption architect
+  - enterprise architect
+  - delivery architect
+  - field architect
   - marketing
   - legal
   - counsel
@@ -24,22 +45,57 @@ title_exclude:   # any of these in the title -> skip without LLM
   - fp&a
   - partnerships
   - enablement
+  - support engineer   # customer/technical support, not product SWE
+  - technical support
   # management / leadership tracks
-  - manager
+  - "manager!"
   - director
   - vice president
   - " vp"
   - head of
   - chief
-  # seniority beyond current facts (~5 yrs)
-  - staff
-  - principal
+  # seniority beyond current facts (~5 yrs) — whole-word so ranges survive
+  - "staff!"
+  - "principal!"
   - distinguished
 
-location_include:  # location string must contain at least one (work-auth: US-based H-1B)
+# Location logic (work-auth: US-based H-1B): PASS if a US signal is present;
+# else REJECT only if a clearly-foreign signal is present; else PASS to the LLM
+# tier (e.g. "New York, NY (HQ)" has neither — it's judged, not free-rejected).
+location_include:  # US signals (all-caps entries match as whole words)
   - "US"
   - "United States"
+  - "USA"
   - "Americas"
+  # (bare "Remote" is NOT a US signal — "Remote, India"/"Remote, EMEA" exist;
+  #  a bare-Remote US-company job has no foreign signal either, so it passes to the LLM tier)
+
+location_exclude:  # clearly-foreign — reject when no US signal is also present
+  - India
+  - Bangalore
+  - Canada
+  - United Kingdom
+  - London
+  - Ireland
+  - Dublin
+  - Germany
+  - Berlin
+  - France
+  - Spain
+  - Netherlands
+  - Austria
+  - Switzerland
+  - Denmark
+  - Sweden
+  - Poland
+  - Israel
+  - Singapore
+  - Japan
+  - Australia
+  - Brazil
+  - EMEA
+  - APAC
+  - LATAM
 
 description_exclude:  # phrases anywhere in the JD -> skip free (H-1B needs sponsorship)
   - "unable to sponsor"
@@ -61,16 +117,24 @@ description_exclude:  # phrases anywhere in the JD -> skip free (H-1B needs spon
 # are judged by the LLM tier and noted in the rationale — they can't be required,
 # since most postings simply don't mention sponsorship either way.
 
-target_companies:  # boards to fetch (Greenhouse slugs for now; Lever/Ashby later)
-  - gitlab
-  - stripe
-  - datadog
-  - sofi
-  - coreweave
-  - databricks
+# Boards to fetch, grouped by ATS. `jobs fetch-all` iterates these via the
+# matching connector. Add a slug under its provider to widen sourcing.
+target_boards:
+  greenhouse:
+    - gitlab
+    - stripe
+    - datadog
+    - sofi
+    - coreweave
+    - databricks
+  ashby:
+    - ramp       # confirmed live 2026-07-26 (118 postings)
+    - plaid      # moved off Greenhouse/Lever to Ashby (115 postings)
+  lever: []      # major ATS, connector ready; add slugs as found
 
-# Wishlist (Gary 2026-07-26) — not on Greenhouse, needs other connectors/slugs:
-#   own ATS: google, microsoft, meta, walmart, bloomberg, americanexpress
-#   lever: plaid · ashby: ramp · unresolved slugs: sequence, loop, blossom
-# Thematic profile for future aggregator sourcing: big tech / fintech / healthcare /
-#   companies whose descriptions emphasize AI (startups included).
+# Still unreachable (own bespoke career sites — need per-company connectors):
+#   google, microsoft, meta, walmart, bloomberg, americanexpress
+# Unresolved slugs: sequence, loop, blossom
+# NOT pursued (see honest note): Indeed & LinkedIn — no clean public API,
+#   scraping is ToS-hostile + technically fragile. More ATS boards are the
+#   legitimate path to breadth, since aggregators pull from these same boards.

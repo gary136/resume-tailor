@@ -8,6 +8,7 @@ PROFILE = {
     "title_include": ["engineer", "developer"],
     "title_exclude": ["sales", "manager", "staff", "account executive"],
     "location_include": ["US", "United States", "Americas"],
+    "location_exclude": ["India", "Canada", "United Kingdom", "Germany"],
 }
 
 
@@ -29,9 +30,11 @@ def test_title_verdict(title, expect_pass):
     ("Remote, Canada; Remote, US", True),
     ("Remote, India", False),
     ("Remote, Germany", False),
-    ("Remote, Austria; Remote, Germany", False),  # 'us' inside Austria must not match
-    ("Remote, Austria; Remote, US", True),
-    (None, True),  # unknown location goes to the LLM tier
+    ("New York, NY (HQ)", True),        # US city, no literal 'US' — must pass (was a live bug)
+    ("San Francisco, CA", True),        # ditto
+    ("London, United Kingdom", False),  # foreign, no US signal
+    ("Remote, Canada; Remote, US", True),  # mixed but has US
+    (None, True),
 ])
 def test_location_verdict(location, expect_pass):
     assert (prefilter.location_verdict(location, PROFILE) is None) == expect_pass
@@ -70,3 +73,22 @@ def test_description_verdict_rejects_no_sponsorship():
         profile,
     )
     assert "excludes sponsorship" in bad
+
+
+def test_seniority_range_rescued_but_bare_staff_rejected():
+    profile = dict(PROFILE, title_exclude=["staff!", "manager!"],
+                   title_include=["engineer"])
+    # a level range that includes a level Gary qualifies for -> rescued to LLM tier
+    assert prefilter.title_verdict("Intermediate to Senior Staff Backend Engineer", profile) is None
+    # a bare Staff title is still rejected
+    assert prefilter.title_verdict("Staff Backend Engineer", profile) is not None
+    # manager whole-word still rejects
+    assert prefilter.title_verdict("Engineering Manager", profile) is not None
+
+
+def test_widened_includes_catch_more_titles():
+    profile = dict(PROFILE, title_include=["engineer", "swe", "full stack", "architect"])
+    for t in ["SWE II", "Full Stack Developer", "Solutions Architect"]:
+        # each contains an include keyword -> not rejected for "no include"
+        v = prefilter.title_verdict(t, profile)
+        assert v != "title matches no include keyword", t

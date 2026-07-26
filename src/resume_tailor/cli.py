@@ -112,16 +112,39 @@ app.add_typer(jobs_app, name="jobs")
 
 
 @jobs_app.command("fetch")
-def jobs_fetch(board: str) -> None:
-    """Fetch a Greenhouse board (e.g. `jobs fetch gitlab`) into the store."""
-    from resume_tailor.connectors import greenhouse
+def jobs_fetch(board: str, source: str = typer.Option("greenhouse", help="greenhouse|ashby|lever")) -> None:
+    """Fetch one board into the store (e.g. `jobs fetch ramp --source ashby`)."""
+    from resume_tailor.connectors import CONNECTORS, fetch_board
 
-    records = greenhouse.fetch_board(board)
+    records = fetch_board(source, board)
     conn = db.connect(files.db_path())
     db.init_db(conn)
-    added, skipped = greenhouse.store_jobs(conn, records)
+    added, skipped = CONNECTORS[source].store_jobs(conn, records)
     conn.close()
-    typer.echo(f"{board}: {added} new jobs stored, {skipped} already known")
+    typer.echo(f"{source}/{board}: {added} new jobs stored, {skipped} already known")
+
+
+@jobs_app.command("fetch-all")
+def jobs_fetch_all() -> None:
+    """Fetch every board in the search profile's target_boards, via each ATS connector."""
+    from resume_tailor.connectors import CONNECTORS, fetch_board
+    from resume_tailor.prefilter import load_profile
+
+    conn = db.connect(files.db_path())
+    db.init_db(conn)
+    total_new = total_known = 0
+    for source, slugs in (load_profile().get("target_boards") or {}).items():
+        for slug in slugs:
+            try:
+                records = fetch_board(source, slug)
+                added, skipped = CONNECTORS[source].store_jobs(conn, records)
+                total_new += added
+                total_known += skipped
+                typer.echo(f"  {source}/{slug}: {added} new, {skipped} known")
+            except Exception as exc:
+                typer.echo(f"  {source}/{slug}: FAILED — {type(exc).__name__}: {exc}")
+    conn.close()
+    typer.echo(f"total: {total_new} new jobs stored, {total_known} already known")
 
 
 @jobs_app.command("list")

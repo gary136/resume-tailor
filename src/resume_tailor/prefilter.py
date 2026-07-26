@@ -31,13 +31,32 @@ def load_profile() -> dict:
     return yaml.safe_load(_profile_path().read_text())
 
 
+# Seniority excludes are RESCUED when the title also names a level Gary qualifies
+# for — i.e. a level *range*. "Intermediate to Senior Staff Engineer" spans levels
+# he could take, so it goes to the LLM tier instead of a free reject.
+_SENIORITY = {"staff", "principal", "distinguished"}
+_RANGE_RESCUE = ("intermediate", "junior", "associate", "mid-level", "mid ", "/senior")
+
+
+def _title_matches(keyword: str, title_lower: str) -> bool:
+    """Whole-word for `word!` markers; substring otherwise."""
+    kw = keyword.lower()
+    if kw.endswith("!"):
+        return re.search(rf"\b{re.escape(kw[:-1].strip())}\b", title_lower) is not None
+    return kw in title_lower
+
+
 def title_verdict(title: str, profile: dict) -> str | None:
     """Return a rejection reason, or None if the title passes."""
     t = title.lower()
-    hit = next((k for k in profile["title_exclude"] if k.lower() in t), None)
-    if hit:
-        return f"title matches exclude keyword {hit.strip()!r}"
-    if not any(k.lower() in t for k in profile["title_include"]):
+    for k in profile["title_exclude"]:
+        if not _title_matches(k, t):
+            continue
+        term = k.strip("! ")
+        if term in _SENIORITY and any(r in t for r in _RANGE_RESCUE):
+            continue  # level range — let the LLM tier judge fit at the lower end
+        return f"title matches exclude keyword {term!r}"
+    if not any(_title_matches(k, t) for k in profile["title_include"]):
         return "title matches no include keyword"
     return None
 
@@ -54,8 +73,14 @@ def location_verdict(location: str | None, profile: dict) -> str | None:
     if location is None:
         return None  # unknown location: let the LLM tier judge
     if any(_location_matches(k, location) for k in profile["location_include"]):
-        return None
-    return "location outside profile"
+        return None  # US signal present -> pass
+    foreign = next(
+        (k for k in profile.get("location_exclude", []) if _location_matches(k, location)),
+        None,
+    )
+    if foreign:
+        return f"location is foreign ({foreign})"
+    return None  # no US signal but no foreign signal either (e.g. a US city) -> LLM judges
 
 
 def description_verdict(description: str, profile: dict) -> str | None:

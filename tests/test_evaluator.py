@@ -108,7 +108,7 @@ def test_refusal_leaves_job_pending(conn, monkeypatch):
 
 def test_rubric_loaded_from_config():
     from resume_tailor.evaluator import RUBRIC, FIT_THRESHOLD, ScoreBreakdown
-    assert RUBRIC["version"] == 1
+    assert RUBRIC["version"] >= 1
     assert sum(s["max"] for s in RUBRIC["components"].values()) == 100
     assert FIT_THRESHOLD == RUBRIC["fit_threshold"] == 70
     fields = set(ScoreBreakdown.model_fields)

@@ -10,6 +10,20 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 - Status (5-answer overview): https://claude.ai/code/artifact/9d6031eb-274c-49d5-af3d-2aa380e5afb5
 - Build map (dependency graph + parallel plan): https://claude.ai/code/artifact/08196fb1-ed1e-4a3e-9296-f1f7b5e80638
 
+## Plan amendments (plan review 2026-07-26 — user-driven recalibration)
+
+- **Build focus, not hunt focus**: purpose is BUILDING the auto-tailor/apply system;
+  real job queues are TEST FIXTURES until Gary flips apply-mode on. (Drift caught & fixed.)
+- **Stage 1c absorbed into stage 3**: machine drafts variants (stage 3 engine), Gary
+  accept/rejects diffs — that review IS the 1c preference collection. No separate 1c build.
+- **Revised remaining sequence**: stage 3 auto-tailor engine → answer bank → stage 4
+  adapter in dev-mode (fills forms against dummy data, NEVER submits) → cover letters →
+  outcome feedback loop → only then apply-mode, per Gary.
+- **Experience calibration (facts v6, rubric v2)**: full-stack > AI harness > cloud
+  (user-level, Azure/AWS); never pitch infra-engineer identity.
+- **Sourcing wave 2 recorded**: 5 Greenhouse boards fetched (2,104 jobs), 24 survivors,
+  7 scored (5 fits total · 1 tailor), 17 parked pending — fixtures, not harvest.
+
 ## Immediate next (as of 2026-07-19 end of session — all three user-gated)
 
 1. **Apply decision — AI Engineer @ GitLab** (fits, soft 78): master.pdf is ready

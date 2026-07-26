@@ -12,6 +12,18 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 
 ## Wave 3 log
 
+- [x] 2026-07-26 — **More job sources + smarter filter** (user request). Built Ashby and
+      Lever connectors (mirror the Greenhouse one) behind a source dispatcher +
+      `jobs fetch-all`. Ashby unlocks Plaid + Ramp (233 real postings; both had moved off
+      Greenhouse). Widened title keywords (architect, swe, full-stack, software, applied
+      scientist, …) and hardened the free filter from LIVE data: whole-word excludes,
+      seniority level-range rescue ("Intermediate to Senior Staff" survives), excluded
+      sales-engineering "Solutions Architect" roles, and a foreign-location block so US
+      cities ("New York, NY") stop being wrongly rejected. Search profile v2, 75 tests.
+      LinkedIn/Indeed deliberately not built (no clean API; ToS-hostile scraping) — more
+      ATS boards are the legitimate breadth path. NOTE: 338 jobs now sit pending (survived
+      the free filter across 6+ boards) — a scoring run is a deliberate choice, not auto.
+
 - [x] 2026-07-26 — **First variant CONFIRMED** (`sre-cloud-cost`, PDF rendered). Engine
       built + live-hardened (fence tolerance, completeness gate, output budget). Division
       of labor learned: cheap models hold STRUCTURAL rules, not SEMANTIC ones — tailoring

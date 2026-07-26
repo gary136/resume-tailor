@@ -10,6 +10,16 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 - Status (5-answer overview): https://claude.ai/code/artifact/9d6031eb-274c-49d5-af3d-2aa380e5afb5
 - Build map (dependency graph + parallel plan): https://claude.ai/code/artifact/08196fb1-ed1e-4a3e-9296-f1f7b5e80638
 
+## Wave 3 log
+
+- [x] 2026-07-26 — **First variant CONFIRMED** (`sre-cloud-cost`, PDF rendered). Engine
+      built + live-hardened (fence tolerance, completeness gate, output budget). Division
+      of labor learned: cheap models hold STRUCTURAL rules, not SEMANTIC ones — tailoring
+      drafts are judgment-tier work (in-session Claude / stronger model), engine handles
+      scale + gates. Accept-rate ledger: machine drafts 0/2 · judgment-tier 1/1 (one
+      phrasing edit: daily cloud = Azure ONLY, never AWS). Facts v7, rubric v3, emphasis
+      ranking: distributed systems > full-stack > AI harness > large-scale data > cloud.
+
 ## Plan amendments (plan review 2026-07-26 — user-driven recalibration)
 
 - **Build focus, not hunt focus**: purpose is BUILDING the auto-tailor/apply system;

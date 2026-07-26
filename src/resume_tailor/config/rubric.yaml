@@ -5,7 +5,7 @@
 #   tech_stack 22 · domain 12 · role_shape 10 · seniority 16 = 60 -> tailor.
 #
 # Lookup order: $RESUME_TAILOR_RUBRIC path -> data/rubric.yaml -> this default.
-version: 2   # 2026-07-26: criteria calibrated to Gary's experience ranking
+version: 3   # 2026-07-26b: distributed systems promoted to top of ranking
 fit_threshold: 70   # hard reqs met + total >= threshold -> fits; below -> tailor
 components:
   tech_stack:
@@ -21,9 +21,9 @@ components:
   role_shape:
     max: 20
     criteria: >-
-      Role type vs candidate's experience ranking (strongest first): full-stack IC,
-      AI harness/agents work, backend services; cloud infrastructure/SRE LOW (candidate
-      is a user of AWS/Azure, not a platform engineer); sales/management near zero.
+      Role type vs candidate's experience ranking (strongest first): DISTRIBUTED SYSTEMS,
+      full-stack IC, AI harness/agents work, large-scale data; cloud infrastructure/SRE
+      LOW (user of Azure/AWS, not a platform engineer); sales/management near zero.
   seniority:
     max: 20
     criteria: >-

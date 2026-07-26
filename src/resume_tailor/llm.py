@@ -62,7 +62,8 @@ class OpenAICompatBackend:
         resp = httpx.post(
             f"{self.base_url}/chat/completions",
             headers={"Authorization": f"Bearer {self.api_key}"},
-            json={"model": self.model, "messages": messages, "max_tokens": 4096},
+            json={"model": self.model, "messages": messages,
+                  "max_tokens": int(os.environ.get("RESUME_TAILOR_LLM_MAX_TOKENS", "8192"))},
             timeout=self.timeout,
         )
         resp.raise_for_status()

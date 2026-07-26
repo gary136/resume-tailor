@@ -19,7 +19,7 @@ from resume_tailor.contracts import FactInventory, JobRecord, PreferenceRecord
 from resume_tailor.llm import LLMBackend
 from resume_tailor.validation import parse_resume, validate_resume
 
-_MD_FENCE_RE = re.compile(r"```(?:markdown|md)?\s*\n(.*?)```", re.DOTALL)
+_MD_FENCE_RE = re.compile(r"```(?:markdown|md)?\s*(.*?)```", re.DOTALL)
 
 
 def build_system_prompt(inventory: FactInventory, preferences: PreferenceRecord) -> str:
@@ -44,7 +44,8 @@ def build_system_prompt(inventory: FactInventory, preferences: PreferenceRecord)
         "never fabrication.\n"
         "5. Keep the frontmatter block EXACTLY as provided by the user prompt.\n"
         "6. Output ONLY the complete variant resume as markdown inside one ```markdown fence.\n\n"
-        f"CANDIDATE VOICE (follow):\n{voice}\n\n"
+        f"CANDIDATE RULES — lines marked HARD have the same force as the HARD RULES "
+        f"above; violating one is a defect:\n{voice}\n\n"
         f"PAST EDIT SIGNALS (respect verdicts):\n{signals}\n\n"
         f"FACT INVENTORY (the only permitted sources):\n{facts}"
     )
@@ -77,10 +78,25 @@ def extract_markdown(raw: str) -> str:
     m = _MD_FENCE_RE.search(raw)
     text = (m.group(1) if m else raw).strip()
     if not text.startswith("---"):
-        # tolerate a fence that started mid-file or stray preamble
-        idx = text.find("---")
+        # tolerate stray preamble before the frontmatter (anchor on resume_id)
+        idx = text.find("---\nresume_id")
+        if idx == -1:
+            idx = text.find("---")
         text = text[idx:] if idx != -1 else text
     return text + ("\n" if not text.endswith("\n") else "")
+
+
+def missing_sections(master_text: str, variant_text: str) -> list[str]:
+    """Structural completeness: every H2 section of the master must survive.
+
+    Catches truncated model output, which the fact-validator alone cannot see
+    (a cut-off file's remaining bullets all validate). Found live 2026-07-26.
+    """
+    heads = lambda text: {l.strip() for l in text.splitlines() if l.startswith("## ")}
+    _, master_body = parse_resume(master_text)
+    _, variant_body = parse_resume(variant_text)
+    return [f"missing section {h!r} (present in master)"
+            for h in sorted(heads(master_body) - heads(variant_body))]
 
 
 def generate_variant(
@@ -104,7 +120,7 @@ def generate_variant(
     if raw is None:
         return None, ["model refused"]
     variant = extract_markdown(raw)
-    errors = validate_resume(variant, inventory)
+    errors = validate_resume(variant, inventory) or missing_sections(master_text, variant)
     if not errors:
         return variant, []
 
@@ -118,7 +134,7 @@ def generate_variant(
     if raw is None:
         return None, ["model refused on repair"]
     variant = extract_markdown(raw)
-    errors = validate_resume(variant, inventory)
+    errors = validate_resume(variant, inventory) or missing_sections(master_text, variant)
     return variant, errors
 
 

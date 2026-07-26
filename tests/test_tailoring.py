@@ -107,3 +107,14 @@ def test_save_variant_writes_family_file(tmp_path):
     p = tailoring.save_variant(GOOD_VARIANT, "backend", tmp_path)
     assert p == tmp_path / "backend.md"
     assert p.read_text().startswith("---")
+
+
+def test_truncated_variant_fails_completeness_gate():
+    master_two_sections = MASTER.replace(
+        "## Experience", "## Experience").rstrip() + "\n\n## Education\n\nB.S. Example\n"
+    truncated = GOOD_VARIANT  # has Experience only
+    backend = FakeBackend([truncated, truncated])
+    variant, errors = tailoring.generate_variant(
+        backend, INVENTORY, PREFS, master_two_sections, JOB, "backend")
+    assert errors and "missing section" in errors[0] and "Education" in errors[0]
+    assert len(backend.calls) == 2  # completeness failure triggered the repair round

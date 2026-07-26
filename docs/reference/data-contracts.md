@@ -10,6 +10,11 @@ Provenance note: the `UNIQUE(job_id)` constraint was not in the original design 
 the doc assigns the application log the job of "preventing double-applying"; the constraint is
 the chosen mechanism for that, approved at freeze.
 
+**Amendment 2026-07-26 (additive):** `AnswerBank` (`data/answers.yaml`) — standard
+application-form answers (salary ranges, start date, location policy, why-company seed +
+strategy), collected once from the user, consumed by the stage-4 apply adapter. Work
+authorization deliberately stays in the fact inventory (verified fact), not here.
+
 **Amendment 2026-07-20 (additive):** `jobs.score_breakdown` (JSON of the rubric
 components behind `soft_score`) — needed so the review queue can show *why* a score
 landed. Additive only; `init_db` migrates existing stores with ALTER TABLE, and

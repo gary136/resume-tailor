@@ -14,7 +14,7 @@ from pathlib import Path
 
 import yaml
 
-from resume_tailor.contracts import FactInventory, PreferenceRecord
+from resume_tailor.contracts import AnswerBank, FactInventory, PreferenceRecord
 
 
 def data_dir() -> Path:
@@ -38,6 +38,18 @@ def save_fact_inventory(inventory: FactInventory, path: Path | None = None) -> P
     path = path or data_dir() / "facts.yaml"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(inventory.model_dump(), sort_keys=False, allow_unicode=True))
+    return path
+
+
+def load_answers(path: Path | None = None) -> AnswerBank:
+    path = path or data_dir() / "answers.yaml"
+    return AnswerBank.model_validate(yaml.safe_load(path.read_text()))
+
+
+def save_answers(answers: AnswerBank, path: Path | None = None) -> Path:
+    path = path or data_dir() / "answers.yaml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(answers.model_dump(), sort_keys=False, allow_unicode=True))
     return path
 
 

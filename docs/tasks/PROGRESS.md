@@ -20,6 +20,11 @@ Live artifacts (update at end of every working session, per turn-end protocol in
       phrasing edit: daily cloud = Azure ONLY, never AWS). Facts v7, rubric v3, emphasis
       ranking: distributed systems > full-stack > AI harness > large-scale data > cloud.
 
+- [x] 2026-07-26 — **Answer bank built** (`AnswerBank` contract + `data/answers.yaml`
+      with Gary's answers: base $140–180k / total $170–250k; start flexible; remote or
+      NYC ≤3 days in person; why-company = ownership+depth seed, adapted per company at
+      judgment tier). Consumed by the stage-4 adapter next.
+
 ## Plan amendments (plan review 2026-07-26 — user-driven recalibration)
 
 - **Build focus, not hunt focus**: purpose is BUILDING the auto-tailor/apply system;

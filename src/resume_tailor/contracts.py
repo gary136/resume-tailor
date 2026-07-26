@@ -158,3 +158,17 @@ class EditSignal(BaseModel):
 class PreferenceRecord(BaseModel):
     voice: list[str] = Field(default_factory=list)
     edit_signals: list[EditSignal] = Field(default_factory=list)
+
+
+class AnswerBank(BaseModel):
+    """Standard application-form answers, collected once from the user
+    (contract amendment 2026-07-26). Work authorization intentionally lives
+    in the fact inventory (auth-us-work), not here — it is a verified fact."""
+
+    salary_base_range: str
+    salary_total_range: str
+    start_date: str
+    location_policy: str
+    why_company_seed: str
+    why_company_strategy: Literal["seed-adapt-per-company"] = "seed-adapt-per-company"
+    extra: dict[str, str] = Field(default_factory=dict)

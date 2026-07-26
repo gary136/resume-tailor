@@ -63,3 +63,14 @@ description_exclude:  # phrases anywhere in the JD -> skip free (H-1B needs spon
 
 target_companies:  # boards to fetch (Greenhouse slugs for now; Lever/Ashby later)
   - gitlab
+  - stripe
+  - datadog
+  - sofi
+  - coreweave
+  - databricks
+
+# Wishlist (Gary 2026-07-26) — not on Greenhouse, needs other connectors/slugs:
+#   own ATS: google, microsoft, meta, walmart, bloomberg, americanexpress
+#   lever: plaid · ashby: ramp · unresolved slugs: sequence, loop, blossom
+# Thematic profile for future aggregator sourcing: big tech / fintech / healthcare /
+#   companies whose descriptions emphasize AI (startups included).

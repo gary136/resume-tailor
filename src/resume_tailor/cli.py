@@ -76,9 +76,35 @@ def intake() -> None:
 
 
 @app.command()
-def tailor() -> None:
-    """Interactive tailoring loop: propose -> confirm -> diff -> accept/reject. (stage 1c)"""
-    _stub("stage 1c (interactive tailoring loop)")
+def tailor(job_id_prefix: str) -> None:
+    """Draft a validator-gated variant for a job (by job_id prefix); prints the diff."""
+    from resume_tailor import tailoring
+    from resume_tailor.llm import get_backend
+    from resume_tailor.store.files import load_fact_inventory, load_preferences
+
+    conn = db.connect(files.db_path())
+    row = conn.execute(
+        "SELECT job_id FROM jobs WHERE job_id LIKE ?", (job_id_prefix + "%",)
+    ).fetchone()
+    if row is None:
+        typer.echo(f"no job matching {job_id_prefix!r}")
+        raise typer.Exit(code=1)
+    job = db.get_job(conn, row["job_id"])
+    conn.close()
+    family = job.job_family or "general"
+    master_text = (files.resumes_dir() / "master.md").read_text()
+
+    variant, errors = tailoring.generate_variant(
+        get_backend(), load_fact_inventory(), load_preferences(), master_text, job, family
+    )
+    if variant is None or errors:
+        typer.echo("draft FAILED the no-fabrication gate:")
+        for e in errors:
+            typer.echo(f"  - {e}")
+        raise typer.Exit(code=1)
+    path = tailoring.save_variant(variant, family, files.resumes_dir())
+    typer.echo(f"draft variant saved: {path} (status: draft — confirm after review)\n")
+    typer.echo(tailoring.diff_against_master(master_text, variant))
 
 
 jobs_app = typer.Typer(no_args_is_help=True, help="Source jobs and evaluate fit. (stage 2)")

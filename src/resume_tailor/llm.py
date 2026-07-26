@@ -32,6 +32,9 @@ class LLMBackend(Protocol):
     ) -> Optional[T]:
         """Return a validated output_model instance, or None if the model refused."""
 
+    def complete_text(self, *, system: str, user: str) -> Optional[str]:
+        """Return plain text output, or None if the model refused."""
+
 
 class OpenAICompatBackend:
     """GLM / any OpenAI-compatible chat-completions endpoint.
@@ -64,6 +67,12 @@ class OpenAICompatBackend:
         )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
+
+    def complete_text(self, *, system: str, user: str) -> Optional[str]:
+        return self._chat([
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ])
 
     @staticmethod
     def _extract_json(text: str) -> str:
@@ -122,6 +131,18 @@ class AnthropicBackend:
         if response.stop_reason == "refusal":
             return None
         return response.parsed_output
+
+    def complete_text(self, *, system: str, user: str) -> Optional[str]:
+        response = self.client.messages.create(
+            model=self.model,
+            max_tokens=16000,
+            thinking={"type": "adaptive"},
+            system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+            messages=[{"role": "user", "content": user}],
+        )
+        if response.stop_reason == "refusal":
+            return None
+        return "".join(b.text for b in response.content if b.type == "text")
 
 
 def get_backend() -> LLMBackend:

@@ -203,10 +203,40 @@ def jobs_evaluate(limit: int = typer.Option(10, help="Max pending jobs to evalua
     )
 
 
-@app.command(name="apply")
-def apply_() -> None:
-    """Batched approval + submission. (stage 4, gated on the Playwright spike)"""
-    _stub("stage 4 (auto-apply)")
+@app.command(name="apply-practice")
+def apply_practice(job_id_prefix: str) -> None:
+    """DEV-MODE rehearsal: fill a real application form (NEVER submits), screenshot it."""
+    from resume_tailor.apply.greenhouse_form import fill_application
+    from resume_tailor.apply.profile import build_profile
+    from resume_tailor.render import render_pdf
+    from resume_tailor.store.files import load_answers, load_fact_inventory
+
+    conn = db.connect(files.db_path())
+    row = conn.execute("SELECT job_id FROM jobs WHERE job_id LIKE ?", (job_id_prefix + "%",)).fetchone()
+    if row is None:
+        typer.echo(f"no job matching {job_id_prefix!r}"); raise typer.Exit(code=1)
+    job = db.get_job(conn, row["job_id"])
+    conn.close()
+    if job.source != "greenhouse":
+        typer.echo(f"apply-practice supports Greenhouse forms only for now (job is {job.source}).")
+        raise typer.Exit(code=1)
+
+    # pick the tailored variant for this family if one exists, else the master
+    variant = files.resumes_dir() / f"{job.job_family}.md" if job.job_family else None
+    resume_md = variant if variant and variant.exists() else files.resumes_dir() / "master.md"
+    pdf, pages = render_pdf(resume_md)  # one page by default
+
+    profile = build_profile(load_fact_inventory(), load_answers())
+    shot = files.data_dir() / "apply_practice" / f"{job.job_id[:8]}.png"
+    result = fill_application(job.url, profile, pdf, shot)
+
+    typer.echo(f"REHEARSAL for {job.company} — {job.title}")
+    typer.echo(f"  resume: {resume_md.name} ({pages}pg)   profile: {profile.first_name} {profile.last_name} <{profile.email}>")
+    for k, v in result.filled.items():
+        typer.echo(f"  {k:11s} {'FILLED via ' + v if v else 'not found'}")
+    typer.echo(f"  screenshot: {result.screenshot}")
+    typer.echo(f"  submitted: {result.submitted}  <-- always False; no submit path exists")
+    typer.echo("  verdict: " + ("looks good" if result.ok else "some core fields missing — inspect the screenshot"))
 
 
 if __name__ == "__main__":

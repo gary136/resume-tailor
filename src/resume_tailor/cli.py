@@ -57,16 +57,20 @@ def _stub(stage: str) -> None:
 
 
 @app.command()
-def render(resume_id: str = typer.Argument("master")) -> None:
-    """Render a resume markdown file to PDF (data/resumes/<id>.pdf)."""
+def render(
+    resume_id: str = typer.Argument("master"),
+    full: bool = typer.Option(False, "--full", help="Allow multi-page (default: fit to one page)"),
+) -> None:
+    """Render a resume markdown file to PDF (data/resumes/<id>.pdf). One page by default."""
     from resume_tailor.render import render_pdf
 
     src = files.resumes_dir() / f"{resume_id}.md"
     if not src.exists():
         typer.echo(f"no such resume: {src}")
         raise typer.Exit(code=1)
-    out = render_pdf(src)
-    typer.echo(f"rendered {out}")
+    out, pages = render_pdf(src, one_page=not full)
+    note = "" if pages == 1 else f" — WARNING: {pages} pages (couldn't fit one; trim bullets in the .md)"
+    typer.echo(f"rendered {out} ({pages} page{'s' if pages != 1 else ''}){note}")
 
 
 @app.command()

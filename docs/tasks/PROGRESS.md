@@ -12,6 +12,14 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 
 ## Wave 3 log
 
+- [x] 2026-07-27 — **One-page resumes by default** (user request). Render tightened to a
+      dense ATS-safe stylesheet (fits the full 26-bullet master on one page, ZERO content
+      dropped) with an auto-trim fallback (top-N bullets/role, floor 3, .md untouched) if a
+      resume still overflows. Tailoring engine now targets one page at draft time. Honest
+      framing recorded: one page helps the human reader, NOT the ATS parser. Guide:
+      `docs/reference/resume-style-guide.md`; rule in CLAUDE.md + preferences. `render`
+      defaults to one page (`--full` opts out). pypdf added for page counting. 79 tests.
+
 - [x] 2026-07-26 — **More job sources + smarter filter** (user request). Built Ashby and
       Lever connectors (mirror the Greenhouse one) behind a source dispatcher +
       `jobs fetch-all`. Ashby unlocks Plaid + Ramp (233 real postings; both had moved off

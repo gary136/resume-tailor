@@ -12,6 +12,15 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 
 ## Wave 3 log
 
+- [x] 2026-07-27 — **Practice applier built (stage 4, DEV-MODE)**. `apply/` package fills
+      real Greenhouse forms from the applicant profile (identity parsed from the contact
+      fact) + the one-page resume PDF, screenshots the result, and NEVER submits (no submit
+      code path; guarded by a test). CLI `apply-practice <job_id>` auto-picks the tailored
+      variant or master. LIVE-VERIFIED on the real GitLab AI Engineer form: 5/5 core fields
+      + resume filled, nothing submitted, screenshot confirmed. 83 tests. REMAINING stage-4
+      work (seen in the screenshot): per-company custom questions (work-auth / why-us /
+      sponsorship dropdowns) mapped from the answer bank; reCAPTCHA behavior at submit.
+
 - [x] 2026-07-27 — **One-page resumes by default** (user request). Render tightened to a
       dense ATS-safe stylesheet (fits the full 26-bullet master on one page, ZERO content
       dropped) with an auto-trim fallback (top-N bullets/role, floor 3, .md untouched) if a

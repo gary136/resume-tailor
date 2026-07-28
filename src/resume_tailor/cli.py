@@ -226,14 +226,23 @@ def apply_practice(job_id_prefix: str) -> None:
     resume_md = variant if variant and variant.exists() else files.resumes_dir() / "master.md"
     pdf, pages = render_pdf(resume_md)  # one page by default
 
-    profile = build_profile(load_fact_inventory(), load_answers())
+    facts, answers = load_fact_inventory(), load_answers()
+    profile = build_profile(facts, answers)
     shot = files.data_dir() / "apply_practice" / f"{job.job_id[:8]}.png"
-    result = fill_application(job.url, profile, pdf, shot)
+    from resume_tailor.llm import get_backend
+    result = fill_application(job.url, profile, pdf, shot,
+                              facts=facts, answers=answers, company=job.company,
+                              backend=get_backend())
 
     typer.echo(f"REHEARSAL for {job.company} — {job.title}")
     typer.echo(f"  resume: {resume_md.name} ({pages}pg)   profile: {profile.first_name} {profile.last_name} <{profile.email}>")
     for k, v in result.filled.items():
         typer.echo(f"  {k:11s} {'FILLED via ' + v if v else 'not found'}")
+    if result.questions:
+        typer.echo("  custom questions:")
+        for label, ans in result.questions.items():
+            short = (label[:52] + "…") if len(label) > 53 else label
+            typer.echo(f"    {'[FILLED] ' + ans[:24] if ans else '[blank — needs you]'}  ← {short}")
     typer.echo(f"  screenshot: {result.screenshot}")
     typer.echo(f"  submitted: {result.submitted}  <-- always False; no submit path exists")
     typer.echo("  verdict: " + ("looks good" if result.ok else "some core fields missing — inspect the screenshot"))

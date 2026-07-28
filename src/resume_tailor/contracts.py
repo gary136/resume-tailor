@@ -171,4 +171,8 @@ class AnswerBank(BaseModel):
     location_policy: str
     why_company_seed: str
     why_company_strategy: Literal["seed-adapt-per-company"] = "seed-adapt-per-company"
+    preferred_name: str = ""                       # blank -> use first name
+    linkedin_url: str = ""                          # blank -> leave the field empty
+    self_identification: str = "Decline to self-identify"  # gender/race/veteran/disability
+    previously_worked_here_default: str = "No"
     extra: dict[str, str] = Field(default_factory=dict)

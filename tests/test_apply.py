@@ -46,3 +46,11 @@ def test_no_submit_code_path_in_module():
     assert "submit()" not in src
     assert 'name="submit"' not in src
     assert "click_submit" not in src
+
+
+def test_fill_result_carries_questions():
+    r = FillResult(filled={"first_name": "#f"}, screenshot=Path("x.png"),
+                   questions={"Require sponsorship?": "Yes", "Favorite color?": None})
+    assert r.questions["Require sponsorship?"] == "Yes"
+    assert r.questions["Favorite color?"] is None
+    assert r.submitted is False

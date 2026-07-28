@@ -12,6 +12,18 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 
 ## Wave 3 log
 
+- [~] 2026-07-27 — **Custom-question answering (door A)**. Answer ENGINE built + truth-table
+      verified (94 tests): work-authorization questions answered DETERMINISTICALLY & truthfully
+      from auth-us-work (sponsorship→Yes; "without sponsorship"→No; citizenship→No; ambiguous
+      work-auth→FLAG for human, never guessed), softer questions from the answer bank, unknowns
+      left blank. Question EXTRACTION works (all 14 GitLab questions found + paired). Browser
+      FILLING is PARTIAL: native controls + some react-select fill; GitLab's custom react-select
+      widgets are inconsistent to drive (aria-controls scoping fixed the phone-widget option
+      bleed; still only some fill). SAFE failure mode: unfilled = blank for the human, NEVER a
+      wrong answer — which fits the never-auto-submit + human-approval design. REMAINING: robust
+      react-select driving per widget; answer-bank fields for country-of-residence / employment-
+      restrictions if desired.
+
 - [x] 2026-07-27 — **Practice applier built (stage 4, DEV-MODE)**. `apply/` package fills
       real Greenhouse forms from the applicant profile (identity parsed from the contact
       fact) + the one-page resume PDF, screenshots the result, and NEVER submits (no submit

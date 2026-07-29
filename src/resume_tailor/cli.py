@@ -244,7 +244,10 @@ def apply_practice(job_id_prefix: str) -> None:
             short = (label[:52] + "…") if len(label) > 53 else label
             typer.echo(f"    {'[FILLED] ' + ans[:24] if ans else '[blank — needs you]'}  ← {short}")
     typer.echo(f"  screenshot: {result.screenshot}")
+    typer.echo(f"  captcha: {result.captcha_kind}  (unattended submit safe: {result.unattended_submit_ok})")
     typer.echo(f"  submitted: {result.submitted}  <-- always False; no submit path exists")
+    if not result.unattended_submit_ok and result.captcha_kind != "none":
+        typer.echo("  NOTE: bot-protection present — real submit must be human-in-the-loop (you press submit).")
     typer.echo("  verdict: " + ("looks good" if result.ok else "some core fields missing — inspect the screenshot"))
 
 

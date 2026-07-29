@@ -12,6 +12,20 @@ Live artifacts (update at end of every working session, per turn-end protocol in
 
 ## Wave 3 log
 
+- [x] 2026-07-28 — **CAPTCHA-at-submit test: DECISIVE.** Built a CAPTCHA *detector*
+      (recon only — NEVER a solver/bypass; defeating CAPTCHA is anti-abuse circumvention,
+      out of scope by policy). Live on the real GitLab form it found **invisible reCAPTCHA
+      Enterprise** (score-based; `.grecaptcha-badge` + `___grecaptcha_cfg` + enterprise.js).
+      CONCLUSION → the last big architecture question is settled: fully-unattended
+      auto-submit is NOT viable on reCAPTCHA-protected ATSs (a headless bot submit gets
+      flagged/blocked/down-scored). **Stage 4 is ASSISTED-SUBMIT, not auto-submit:** the
+      machine prepares the complete application (resume + fields + truthful answers), and
+      the HUMAN reviews and presses submit in a real browser session (handling any
+      human-verification). This is also the ethical/ToS-respecting design. Detector wired
+      into the rehearsal report; 100 tests.
+- [x] 2026-07-28 — **Cover letters DROPPED from scope** (user: most companies don't require
+      one). Removed from the remaining sequence.
+
 - [~] 2026-07-27 — **Custom-question answering (door A)**. Answer ENGINE built + truth-table
       verified (94 tests): work-authorization questions answered DETERMINISTICALLY & truthfully
       from auth-us-work (sponsorship→Yes; "without sponsorship"→No; citizenship→No; ambiguous

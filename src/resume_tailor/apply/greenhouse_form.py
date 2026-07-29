@@ -27,6 +27,8 @@ class FillResult:
     filled: dict[str, str | None]   # field -> selector that worked (or None)
     screenshot: Path
     questions: dict[str, str | None] | None = None  # custom question -> answer filled (or None)
+    captcha_kind: str = "unchecked"    # from apply.captcha.detect_captcha
+    unattended_submit_ok: bool = False
     submitted: bool = False         # ALWAYS False — invariant, asserted by tests
 
     @property
@@ -226,9 +228,13 @@ def fill_application(
                 ans = answer_question(q, facts, answers, company=company, backend=backend)
                 questions[q.label] = ans if (ans and _fill_react_select(page, combo, ans)) else None
 
-        page.wait_for_timeout(1500)
+        from resume_tailor.apply.captcha import detect_captcha
+        cap = detect_captcha(page)
+
+        page.wait_for_timeout(1000)
         page.screenshot(path=str(screenshot), full_page=True)
         browser.close()
 
-    return FillResult(filled=filled, screenshot=screenshot,
-                      questions=questions or None, submitted=False)
+    return FillResult(filled=filled, screenshot=screenshot, questions=questions or None,
+                      captcha_kind=cap.kind, unattended_submit_ok=cap.unattended_submit_ok,
+                      submitted=False)
